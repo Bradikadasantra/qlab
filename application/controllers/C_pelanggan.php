@@ -11,6 +11,11 @@ class C_pelanggan extends CI_Controller {
         $this->load->library('pdf');
         $this->load->library('hasilPemeriksaan');
     }
+
+    public function index(){
+      redirect('c_dashboard');
+    }
+    
     
   public function tampil_riwayat(){
       $id_auth = $this->session->userdata('id_auth');
