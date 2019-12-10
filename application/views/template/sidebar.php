@@ -8,7 +8,7 @@
         <div class="sidebar-brand-icon mx-1">
 			<img src="<?php echo base_url('image/logo_up.png') ?>">
         </div>
-        <div class="sidebar-brand-text mx-1">laboratorium Qlab</div>
+        <div class="sidebar-brand-text mx-1">laboratorium Qlab ganti</div>
       </a>
 
 		<!-- Divider -->
