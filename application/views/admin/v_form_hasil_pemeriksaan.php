@@ -25,6 +25,7 @@
                         </div>
                         <div class="col-md-3 offset-6">
                             <h6> Status Sertifikat : <?php echo StatusSertifikat($baris->status_sertifikat)?></h6>
+                            <a href="#theyModal" data-toggle="modal" data-id="<?php echo $baris->id_sampel; ?>"><small><i>Rincian penolakan</i></small></a>
                         </div>
                     </div>
                     <div class="row mt-3">  
@@ -126,6 +127,26 @@
 		</div>
 	</div>
 
+
+    <div class="modal fade bd-example-modal-lg" id="theyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+                <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Rincian Penolakan</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+                    <div class="fetched-data3"></div>
+				</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>      
+                </div>
+			</div>
+		</div>
+	</div>
+
     <!--modal untuk hapus -->
     <div class="modal fade" id="weModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -173,6 +194,21 @@ $(document).ready(function(){
 				 data :  'rowid='+ rowid,
                 success : function(data){
 					    $('.fetched-data2').html(data);//menampilkan data ke dalam modal
+                }
+            });
+         });
+    });
+
+    $(document).ready(function(){
+        $('#theyModal').on('show.bs.modal', function (e) {
+			var rowid = $(e.relatedTarget).data('id');
+            //menggunakan fungsi ajax untuk pengambilan data
+            $.ajax({
+                type : 'post',
+				url : "<?php echo base_url('c_permintaan_uji/rincian_penolakan')?>",
+				 data :  'rowid='+ rowid,
+                success : function(data){
+					    $('.fetched-data3').html(data);//menampilkan data ke dalam modal
                 }
             });
          });

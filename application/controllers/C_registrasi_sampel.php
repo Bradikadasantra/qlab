@@ -313,7 +313,7 @@ class C_registrasi_sampel extends CI_Controller {
       'no_tagihan'        => SetInvoice("INV_"),
       'no_order'          => $no_order,
       'jumlah_tagihan'    => getJumlah($no_order),
-      'status_tagihan'    => StatusTagihan(0)
+      'status_tagihan'    => 0
     );
 
     $tagihan['res']  = $this->m_registrasi_sampel->insert($tag, 'tagihan');

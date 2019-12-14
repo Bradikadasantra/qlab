@@ -135,10 +135,15 @@
             <a href="#" class="btn btn-success btn-sm disabled"><i class="fa fa-check"></i> Selesai</a>
                 <?php } else {?>
             <a href="<?php echo base_url('c_permintaan_Uji/selesai_setujuHasilPemeriksaan/'.$no_order.'/'.$id_bidang)?>" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Selesai</a>
-                <?php } } else{ ?>
-            <a href="<?php echo base_url('c_permintaan_Uji/selesai_setujuHasilPemeriksaan/'.$no_order.'/'.$id_bidang)?>" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Selesai</a>
-                <?php } ?>
-
+                <?php } 
+            } 
+            else { ?>
+            <?php  $kuy = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order'=> $no_order), array('id_bidang'=>$id_bidang), array('status_sertifikat'=> 4))->num_rows();
+                if ($kuy > 0){ ?>
+            <a href="<?php echo base_url('c_permintaan_Uji/selesai_setujuHasilPemeriksaan/'.$no_order.'/'.$id_bidang)?>" class="btn btn-success btn-sm disabled"><i class="fa fa-check"></i> Selesai</a>
+                <?php }else { ?>
+                    <a href="<?php echo base_url('c_permintaan_Uji/selesai_setujuHasilPemeriksaan/'.$no_order.'/'.$id_bidang)?>" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Selesai</a>
+            <?php } }?>
         </div>
     </div>
     <div class="modal fade" id="weModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

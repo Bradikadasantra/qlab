@@ -15,8 +15,7 @@
                             <div class="nav nav-tabs mt-5" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#sampel_siap_uji" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fas fa-paperclip"> Sampel Siap Uji</i>
                                 <?php   
-                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), array('status'=> 2), array('status_tinjauan_anl'=> 0));
-
+                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), "(status = '2' AND status_sampel != '3')", array('status_tinjauan_anl'=> 0));
                                         if ($notif > 0){
                                     ?>
                                     <span class="badge badge-danger"><?php echo $notif; ?></span>
@@ -24,7 +23,7 @@
                                 </a>
                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#input_hasil_uji" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fas fa-pen"></i>  Input Hasil Uji 
                                 <?php 
-                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), array('status'=> 7), array('status_sertifikat'=> 0));
+                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), "(status = '7' AND status_sampel != '3')", array('status_sertifikat'=> 0));
                                         if ($notif > 0){
                                     ?>
                                     <span class="badge badge-danger"><?php echo $notif; ?></span>

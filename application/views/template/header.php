@@ -15,6 +15,7 @@
     <script src	="<?php echo base_url()?>assets/jquery.js"></script>
 	<link href	="<?php echo base_url()?>assets/css/select2.min.css" rel="stylesheet" type="text/css">
 	<script src	="<?php echo base_url()?>assets/js/select2.min.js"></script>
+	<script src	="<?php echo base_url()?>assets/js/Chart.js"></script>
 	<script src	="<?php echo base_url()?>assets/tinymce/tinymce.min.js"></script>
 	<script src	="<?php echo base_url()?>assets/jquery.multiselect.js"></script>
 	<script src	="<?php echo base_url()?>assets/js/bootstrap.bundle.min.js"></script>	
@@ -27,7 +28,6 @@
 	<script src="<?php echo base_url() ?>assets/sweetalert/dist/sweetalert.min.js" type="text/javascript"></script>
 	<link href="<?php echo base_url('assets/')?>css/style.css" rel="stylesheet" type="text/css">
 	<link href="<?php echo base_url('assets/')?>css/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
-	<link href="<?php echo base_url('assets/')?>css/form-multistep.css" rel="stylesheet" type="text/css">
 	<link href="<?php echo base_url('assets/')?>jquery.multiselect.css" rel="stylesheet" type="text/css">
 	<link href="<?php echo base_url('assets/')?>css/app.css" rel="stylesheet" type="text/css">
 	<link href="<?php echo base_url('vendor/') ?>vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

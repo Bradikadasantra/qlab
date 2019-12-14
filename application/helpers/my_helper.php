@@ -15,6 +15,14 @@
 		$row = $hsl->row();
 		return $row->jml;
 	 }
+	 
+	 
+	function GrandTotal($bulan, $tahun){
+		 $ci = get_instance();
+		 $row = $ci->m_registrasi_sampel->view_by($bulan, $tahun)->row();
+		 return $row->total; 
+	 }
+	 
 function getNota($table, $param, $kode) {
 @$today = date("Ymd");
 
@@ -109,7 +117,7 @@ function setNoSampel($kode, $tgl_order) {
 		$qri = "SELECT MAX(no_tagihan) AS last FROM tagihan";
 		$row = $ci->db->query($qri)->row();
 	
-		$lastNo = substr($row->last,0);
+		$lastNo = substr($row->last,11);
 		$urut = $lastNo+1;
 		if ($urut < 10){
 		$lastNoUrut = $kode.$tahun.".0000".$urut;
@@ -284,28 +292,6 @@ function status($s){
 			}
 		}
 				
-	function StatusTinjauan($s, $id_bidang, $status){
-		$ci = get_instance();
-		$hak_akses  = $ci->session->userdata('hak_akses');
-	
-		if ($hak_akses == 'manajer_teknik'){
-			$cari = $ci->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $s), $id_bidang, $status);
-				if ($cari->num_rows() > 0 ){
-					echo '<span class="badge badge-success"><i class="fas fa-minus fa-sm"></i></span> Sudah dikerjakan';
-					}
-				else{
-					echo '<span class="badge badge-danger"><i class="fas fa-minus fa-sm"></i></span> Belum dikerjakan';
-				}
-		}
-		else if ($hak_akses == 'analis'){
-			$cari2 = $ci->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $s),$id_bidang, $status);
-				if ($cari2->num_rows() > 0 ){
-					echo '<span class="badge badge-success"><i class="fas fa-minus fa-sm"></i></span> Sudah dikerjakan'; 
-				}else{
-					echo '<span class="badge badge-danger"><i class="fas fa-minus fa-sm"></i></span> Belum dikerjakan';
-				}
-		}
-	}
 	
 	function notif_navbar($id_bidang, $status, $tinjauan){
 		$ci  = get_instance();
@@ -323,42 +309,32 @@ function status($s){
 			}
 	}
 	
-	function status_sertifikat2($no_order, $id_bidang){
-		$ci = get_instance();
-		$hak_akses  = $ci->session->userdata('hak_akses');
-		$default = $ci->m_registrasi_sampel->all_data_perbidang($no_order, $id_bidang)->result();
-		$cek_0 = $ci->m_registrasi_sampel->all_data_perbidang3($no_order, $id_bidang,array('status_sertifikat'=> 0),array('status_tinjauan_mt'=> 4))->result();
-		$cek_1 = $ci->m_registrasi_sampel->all_data_perbidang3($no_order, $id_bidang,array('status_sertifikat'=> 1),array('status_tinjauan_mt'=> 2))->result();
-		$cek_2 = $ci->m_registrasi_sampel->all_data_perbidang3($no_order, $id_bidang,array('status_sertifikat'=> 2),array('status_tinjauan_mt'=> 4))->result();		
-		
-		if ($hak_akses == 'manajer_teknik'){
-			if (count($default) == count($cek_1)){
-			echo '<span class="badge badge-danger"> Butuh persetujuan</span>';
-			}else if (count($default) == count($cek_2)){
-				echo '<span class="badge badge-success"> Disetujui</span>';
-			}else{
-				echo '-';
-			}
-			
-		}else if ($hak_akses == 'analis'){
-			if (count($default) == count($cek_1)){
-			echo '<span class="badge badge-primary"> Diajukan</span>';
-			}else if (count($default) == count($cek_2)){
-				echo '<span class="badge badge-success"> Disetujui</span>';
-			}else if (count($default) == count($cek_3)){
-				echo '<span class="badge badge-warning"> Diuji ulang</span>';
-			}else{
-				echo '-';
-			}
-		}
-	}
+	
 	
 	function StatusTagihan($status){
+		$ci = get_instance();
+		$hak_akses  = $ci->session->userdata('hak_akses');
+		
+		if ($hak_akses == 'Super Admin'){
 		switch ($status){
+			case 0 : return '-';  break;
+			case 1 : return 'Konfirmasi';  break;
+			case 2 : return 'Lunas';  break;
+		}
+		}else if ($hak_akses == 'pelanggan'){
+			switch ($status){
 			case 0 : return '<button type="button" class="btn btn-outline-danger btn-sm disabled"> Belum Bayar</button>';  break;
 			case 1 : return '<button type="button" class="btn btn-outline-info btn-sm disabled"> Sudah Konfirmasi</button>';  break;
 			case 2 : return '<button type="button" class="btn btn-outline-success btn-sm disabled"> Sudah Bayar</button>';  break;
 		}
+		}else if ($hak_akses == 'manajer_teknik'){
+			switch ($status){
+			case 0 : return '<button type="button" class="btn btn-outline-danger btn-sm disabled"> Belum Bayar</button>';  break;
+			case 1 : return '<button type="button" class="btn btn-outline-info btn-sm disabled"> Sudah Konfirmasi</button>';  break;
+			case 2 : return '<button type="button" class="btn btn-outline-success btn-sm disabled"> Sudah Bayar</button>';  break;
+		}
+		}
+	
 	}
 
 

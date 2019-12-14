@@ -19,7 +19,8 @@
                                     <th width="15%">Pemilik Rekening</th>
                                     <th width="15%">Jumlah</th>
                                     <th width="5%">Bukti</th>
-                                    <th width="11%">Tanggal</th>
+                                    <th width="11%">Status</th>
+                                    <th width="10%">Tanggal</th>
                                     <th width="7%">Aksi</th>
                                 </thead>
                                 <tbody class="text-center">
@@ -30,6 +31,7 @@
                                         <td><?php echo rupiah($baris->jumlah)  ?></td>
                                         <td><a href="<?php echo base_url('bukti_bayar/'.$baris->bukti_byr);?>" data-fancybox><i class="fas fa-receipt"></i></a></td>
                                         <td><?php echo StatusTagihan($baris->status_tagihan) ?></td>
+                                        <td><?php echo date('d/m/y', strtotime($baris->tgl_byr)) ?></td>
                                         <td>
                                             <div class="dropup">
                                                 <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

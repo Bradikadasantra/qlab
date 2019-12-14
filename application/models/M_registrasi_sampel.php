@@ -35,6 +35,16 @@ class M_registrasi_sampel extends CI_Model{
         return $this->db->get();
     }
 
+    public function view_by($bulan, $tahun){
+        $this->db->select('SUM(jumlah_tagihan) AS total');
+        $this->db->from('order');
+        $this->db->join('tagihan','tagihan.no_order = order.no_order');
+        $this->db->where('status_tagihan', '2');
+        $this->db->where($bulan);
+        $this->db->where($tahun);
+        return $this->db->get();
+    }
+
     public function order_orderDetail($where){
         $this->db->select('*');
         $this->db->from('order');
@@ -153,6 +163,17 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->where($where2);
         $this->db->where($where3);
         $this->db->where($where4);
+        return $this->db->get();
+    }
+
+    public function rekap_regist($where, $where2){
+        $this->db->select('*');
+        $this->db->from('order');
+        $this->db->join('tagihan','tagihan.no_order = order.no_order');
+        $this->db->join('order_detail','order_detail.no_order = order.no_order');
+        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
+        $this->db->where($where);
+        $this->db->where($where2);
         return $this->db->get();
     }
 

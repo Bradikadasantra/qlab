@@ -21,9 +21,19 @@ class C_pelanggan extends CI_Controller {
       $id_auth = $this->session->userdata('id_auth');
       $cari_id_pelanggan = $this->m_pelanggan->ambil_info_pelanggan($id_auth)->row();
       $id_pelanggan = $cari_id_pelanggan->id_pelanggan;
-  
+
+      $cek = $this->db->query("SELECT * FROM `order` WHERE id_pelanggan = '$id_pelanggan'")->num_rows();
+      if ($cek > 0){
       $data['riwayat'] = $this->m_registrasi_sampel->tampil_riwayat($id_pelanggan)->result();
       $this->templates->utama('pelanggan/v_riwayat', $data);
+      }else {
+        $data = array (
+          'title'   => 'Riwayat',
+          'content' => 'Anda belum memiliki riwayat',
+          'url'     => base_url('c_dashboard')
+        );
+        $this->templates->utama('pelanggan/v_error',$data);  
+      }
     }
 
 
@@ -110,20 +120,6 @@ class C_pelanggan extends CI_Controller {
             
             }
 
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -139,13 +135,31 @@ class C_pelanggan extends CI_Controller {
 
   public function print_hasilPemeriksaan($id_sampel){
     $run = $this->m_registrasi_sampel->get_by_id('sampel','id_sampel',$id_sampel);
-    if ($run->status_sampel != 3 and $run->status_sertifikat != 3){
+    if ($run->status_sampel == 3 OR $run->status_sertifikat != 2){
+      $hak_akses = $this->session->userdata('hak_akses');
 
+      if ($hak_akses == 'Super Admin'){
+
+        $data = array(
+        'title'   => 'Hasil Pemeriksaan',
+        'content' => 'Maaf, hasil pengujian sampel yang di uji belum keluar',
+        'url'     => base_url('c_permintaan_uji/rekap_registrasiSampel')
+        );
+      }
+      else if ($hak_akses == 'manajer_teknik'){
+        $data = array(
+        'title'   => 'Hasil Pemeriksaan',
+        'content' => 'Maaf, hasil pengujian sampel yang di uji belum keluar',
+        'url'     => base_url('c_permintaan_uji')
+      );
+      }
+      else {
       $data = array (
         'title'   => 'Hasil Pemeriksaan',
-        'content' => 'Maaf, hasil pengujian sampel yang anda uji belum keluar',
+        'content' => 'Maaf, hasil pengujian sampel yang di uji belum keluar',
         'url'     => base_url('c_pelanggan/tampil_riwayat')
       );
+    }
       $this->templates->utama('pelanggan/v_error',$data);
     }else{
     

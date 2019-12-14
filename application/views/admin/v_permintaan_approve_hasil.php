@@ -15,7 +15,7 @@
                             <div class="nav nav-tabs mt-5" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fas fa-paperclip"></i> Approval Hasil Uji
                                     <?php 
-                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), array('status'=> 8), 'status_tinjauan_mt != 4');
+                                        $notif = notif_navbar(array('id_bidang'=> $id_bidang), "(status = '8' AND status_sampel != '3')", 'status_tinjauan_mt != 4');
 
                                         if ($notif > 0){
                                     ?>
@@ -59,7 +59,7 @@
                                                         <td><?php echo $baris->no_order; ?></td>
                                                         <td><?php echo $pengirim; ?></td>
                                                         <td><?php echo $instansi; ?></td>
-                                                        <td><?php echo status_tinjauan(array('order.no_order'=> $baris->no_order), array('id_bidang'=> $id_bidang), "(status_tinjauan_mt = '2' OR status_tinjauan_mt = '3')") ?></td>
+                                                        <td><?php echo status_tinjauan(array('order.no_order'=> $baris->no_order), "(id_bidang = '$id_bidang' AND status_sampel != '3')", "(status_tinjauan_mt = '2' OR status_tinjauan_mt = '3')") ?></td>
                                                         <td><a href="<?php echo base_url('c_permintaan_uji/detail_HasilPemeriksaan/'.$baris->no_order.'/'.'approve') ?>" class="btn btn-primary btn-sm"><i class="fas fa-eye fa-sm"></i> Lihat</a></td>
                                                     </tr>
                                                 <?php endforeach; ?>
@@ -80,7 +80,7 @@
                                             <?php 
                                                 $no = 1;
                                                 foreach ($detail2 as $row):
-                                                    $pelanggan = $this->m_registrasi_sampel->get_by_id('pelanggan', 'id_pelanggan', $baris->id_pelanggan);
+                                                    $pelanggan = $this->m_registrasi_sampel->get_by_id('pelanggan', 'id_pelanggan', $row->id_pelanggan);
                                                     $pengirim = $pelanggan->nama; 
                                             ?>
                                             <tr>

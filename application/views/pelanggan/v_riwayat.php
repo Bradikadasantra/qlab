@@ -62,7 +62,13 @@
                         <div class="row mb-4">
                             <div class="col-md-12">
                                 <div class="btn-group" role="group" aria-label="Basic example">
+                                <?php 
+                                    if ($baris->status != 0 and $baris->status != 1){
+                                ?>
                                     <button class="btn btn-sm btn-outline-info" onclick="window.location.href='<?php echo base_url('c_pelanggan/print_invoice/'.$baris->no_order) ?>'"><i class="fas fa-file-invoice"></i> Invoice</button>
+                                    <?php } else { ?>
+                                        <button class="btn btn-sm btn-outline-info" disabled onclick="window.location.href='<?php echo base_url('c_pelanggan/print_invoice/'.$baris->no_order) ?>'"><i class="fas fa-file-invoice disabled"></i> Invoice</button>
+                                    <?php } ?>
                                     <?php 
                                         $cek_bayar = $this->m_registrasi_sampel->get_by_id('tagihan','no_order',$baris->no_order);
                                         if ($cek_bayar->status_tagihan != 2){  ?>
@@ -73,7 +79,7 @@
                                     <button class="btn btn-outline-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-file"></i> Hasil Pengujian</button>
                                     <div class="dropdown-menu">
                                     <?php 
-                                        $sql = "SELECT * FROM order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail WHERE no_order = '$baris->no_order'";
+                                        $sql = "SELECT * FROM order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail WHERE no_order = '$baris->no_order' AND status_sampel != '3'";
                                         $run = $this->db->query($sql)->result();
                                         foreach($run as $de): ?>
                                         <a class="dropdown-item" href="<?php echo base_url('c_pelanggan/print_hasilPemeriksaan/'.$de->id_sampel)?>"><?php echo setNosampel($de->no_sampel, $baris->tgl_order);?></a>
@@ -161,14 +167,20 @@
                             <?php endforeach;?>
                         </div>
                             <?php 
+                               $hm = $this->m_registrasi_sampel->all_data_perbidang(array('order.no_order'=> $baris->no_order), array('status_sampel'=> 4))->num_rows(); 
                             if ($baris->status == 4){
                             ?>
                             <div class="row mt-4">
                                 <div class="col-md-9">
                                     <div class="alert alert-secondary">
                                         <p> Apakah anda ingin tetap melanjutkan pengujian ?</p>
+                                        <?php if ($hm > 0) { ?>
+                                        <a href="#konfirmasi_sampel_tidak" data-id="<?php echo base_url('c_permintaan_uji/jika_tidak/'.$baris->no_order) ?>" class="btn btn-danger btn-sm disabled" data-toggle="modal"> Tidak </a>
+                                        <a href="#konfirmasi_sampel_ya" data-id="<?php echo base_url('c_permintaan_uji/jika_ya/'.$baris->no_order) ?>" class="btn btn-primary btn-sm disabled" data-toggle="modal"> Ya </a>
+                                        <?php } else { ?>
                                         <a href="#konfirmasi_sampel_tidak" data-id="<?php echo base_url('c_permintaan_uji/jika_tidak/'.$baris->no_order) ?>" class="btn btn-danger btn-sm" data-toggle="modal"> Tidak </a>
-                                        <a href="#konfirmasi_sampel_ya" data-id="<?php echo base_url('c_permintaan_uji/jika_ya/'.$baris->no_order) ?>" class="btn btn-primary btn-sm" data-toggle="modal"> Ya </a>
+                                        <a href="#konfirmasi_sampel_ya" data-id="<?php echo base_url('c_permintaan_uji/jika_ya/'.$baris->no_order) ?>" class="btn btn-primary btn-sm    " data-toggle="modal"> Ya </a>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>

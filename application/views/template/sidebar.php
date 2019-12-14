@@ -45,8 +45,7 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Data Sampel:</h6>
             <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/approval_sa')?>">Permintaan Uji Sampel</a>
-            <a class="collapse-item" href="#">Hasil Pengujian</a>
-            <a class="collapse-item" href="#">Rekap Registrasi Sampel</a>
+            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel')?>">Rekap Registrasi Sampel</a>
             </div>
         </div>
       </li>
@@ -72,19 +71,19 @@
           <span>Konfirmasi Pembayaran</span></a>
       </li>
 	  
-      <!-- Nav Item - Pages Collapse Menu -->
+      <!-- Nav Item - Pages Collapse Menu
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url('c_admin/daftar_aset') ?>">
           <i class="fas fa-fw fa-folder"></i>
           <span>Aset</span></a>
       </li>
 
-      <!-- Nav Item - Charts -->
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url('c_bahan_uji') ?>">
           <i class="fas fa-fw fa-folder"></i>
           <span>Bahan</span></a>
-      </li>
+      </li> 
+      -->
 
       <li class="nav-item">
         <a class="nav-link" href="#">
@@ -100,13 +99,13 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#laporan" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-book"></i>
+          <i class="fas fa-fw fa-clipboard"></i>
           <span>Laporan</span>
         </a>
         <div id="laporan" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manajemen User</h6>
-            <a class="collapse-item" href="#">Keuangan</a>
+            <a class="collapse-item" href="<?php echo base_url('c_laporan/keuangan') ?>">Keuangan</a>
             <a class="collapse-item" href="#">Sampel</a>
           </div>
         </div>
@@ -144,12 +143,6 @@
             <a class="collapse-item" href="<?php echo base_url('c_pelanggan/tampil_riwayat'); ?>">Riwayat</a>
           </div>
         </div>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url('c_user/penawaran_harga') ?>">
-          <i class="fas fa-fw fa-tag"></i>
-          <span>Penawaran harga</span></a>
       </li>
       <!-- Nav Item - Charts -->
       <li class="nav-item">

@@ -114,7 +114,8 @@
                             <div class="row">
                                 <div class="col-md mt-4">
                                     <div class="form-group">
-                                        <textarea class="form-control" rows="4" name="hal_lain" placeholder="Hal Lain"></textarea>
+                                        <label for="mytextarea">Hal Lain</label>
+                                        <textarea class="form-control" id="mytextarea" rows="4" name="hal_lain" placeholder="Hal Lain"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -201,6 +202,11 @@
 $(".sel").select2({
     placeholder: "Jenis Pemeriksaan"
         });
+
+        tinymce.init({
+        selector: '#mytextarea',
+        height : 320, 
+         });
 
 // konfirmasi penghapusan sampel
     $(document).ready(function() {

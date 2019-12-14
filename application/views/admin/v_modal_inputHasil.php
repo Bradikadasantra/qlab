@@ -1,9 +1,9 @@
-
-    <div class="container-fluid">
+       <div class="container-fluid">
         <div class="row">
             <div class="col-md">
                 <form action="<?php echo base_url('c_permintaan_uji/action_inputHasilPemeriksaan') ?>" method="post">
                         <div class="form-group">
+                        <input type="text" class="form-control-plaintext text-center text-dark" value="<?php echo "Nomor : ". setNoSampel($no_sampel, $tgl_order)?>">
                         <input type="hidden" name="kode" value="<?php echo $kode;  ?>">
                         <input type="hidden" value="<?php echo $id_sampel; ?>" name="id_sampel">
                         <label for="pemeriksaan">Pemeriksaan</label>
