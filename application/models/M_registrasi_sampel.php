@@ -49,6 +49,7 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->select('*');
         $this->db->from('order');
         $this->db->join('order_detail','order_detail.no_order = order.no_order');
+        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
         $this->db->where($where);
         return $this->db->get();
     }
@@ -61,7 +62,8 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
         $this->db->where($id_bidang);
         $this->db->where($status);
-        $this->db->order_by('tgl_order', 'desc');               
+        $this->db->order_by('tgl_order', 'desc');   
+        $this->db->order_by('no_order', 'desc');            
         return $this->db->get();
      }
 
@@ -73,11 +75,13 @@ class M_registrasi_sampel extends CI_Model{
         return $this->db->get();
     }
 
+
     public function tampil_riwayat ($id_pelanggan){
         $this->db->select('*');
         $this->db->from('order');
         $this->db->where('id_pelanggan', $id_pelanggan);
-        $this->db->order_by('tgl_order', 'DESC');
+        $this->db->order_by('tgl_order', 'desc');
+        $this->db->order_by('no_order', 'desc');
         return $this->db->get();
 
 }
@@ -119,6 +123,17 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->where($where);
         $this->db->where($where2);
         $this->db->where($where3);
+        return $this->db->get();
+    }
+
+    public function view_sertifikat($where, $where2){
+        $this->db->select('*');
+        $this->db->from('tagihan');
+        $this->db->join('order','tagihan.no_order = order.no_order');
+        $this->db->join('order_detail','order_detail.no_order = order.no_order');
+        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
+        $this->db->where($where);
+        $this->db->where($where2);
         return $this->db->get();
     }
 

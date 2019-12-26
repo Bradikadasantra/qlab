@@ -46,13 +46,10 @@
                                         <div class="form-group mt-3">
                                         <label for="nama">Hak Akses</label>
                                            <select class="form-control" name="hak_akses">
-                                                <option value="manajer_puncak">Manajer Puncak</option>
-                                                <option value="ka_laboratorium">Ka Laboratorium</option>
-                                                <option value="manajer_mutu">Manajer Mutu</option>
-                                                <option value="manajer_operasional">Manajer Operasional</option>
-                                                <option value="manajer_teknik">Manajer Teknik</option>
-                                                <option value="analis">Analis</option>
-                                                <option value="penyelia">Penyelia</option>
+                                              <?php
+                                                foreach ($data as $baris):?>
+                                              <option value="<?php echo $baris->id_hak_akses; ?>"><?php echo $baris->hak_akses; ?></option>
+                                                <?php endforeach; ?>
                                            </select>
                                         </div>
 

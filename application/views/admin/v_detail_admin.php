@@ -23,55 +23,13 @@
                             <label for="no_telp">Hak Akses</label>
                                 <select class="form-control" name="hak_akses">
                                 <?php 
-										 if($baris['hak_akses'] == 'Super Admin'){
-                                            echo "<option value =\"Super Admin\" selected >Super Admin</option>";
-                                                }
-                                            else{
-                                                echo "<option value=\"Super Admin\">Super Admin</option>";
-                                                }
-                                        if($baris['hak_akses'] == 'manajer_puncak'){
-                                            echo "<option value =\"manajer_puncak\" selected >Manajer Puncak</option>";
-                                                }
-                                            else{
-                                                echo "<option value=\"manajer_puncak\">Manajer Puncak</option>";
-                                                }
-                                        if($baris['hak_akses'] == 'ka_laboratorium'){
-                                            echo "<option value =\"ka_laboratorium\" selected >Ka Laboratorium</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"ka_laboratoirum\">Ka Laboratorium</option>";	
-                                            }
-                                        if($baris['hak_akses'] == 'manajer_mutu'){
-                                                echo "<option value =\"manajer_mutu\" selected >Manajer Mutu</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"manajer_mutu\">Manajer Mutu</option>";
-                                            }
-                                        if($baris['hak_akses'] == 'manajer_operasional'){
-                                                echo "<option value =\"manajer_operasional\" selected >Manajer Operasional</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"manajer_operasional\">Manajer Operasional</option>";
-                                            }
-                                        if($baris['hak_akses'] == 'manajer_teknik'){
-                                                echo "<option value =\"manajer_teknik\" selected >Manajer Teknik</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"manajer_teknik\">Manajer Teknik</option>";
-                                            }
-                                        if($baris['hak_akses'] == 'analis'){
-                                                echo "<option value =\"analis\" selected >Analis</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"analis\">Analis</option>";
-                                            }
-                                        if($baris['hak_akses'] == 'penyelia'){
-                                                echo "<option value =\"penyelia\" selected >Penyelia</option>";
-                                                }
-                                            else{
-                                                echo"<option value=\"penyelia\">Penyelia</option>";
-                                            }
-                                    ?>
+                                    foreach ($hak_akses as $c):
+                                        if ($c->id_hak_akses == $baris['hak_akses']){
+                                ?>
+                                    <option value="<?php echo $c->id_hak_akses ?>"selected><?php echo $c->hak_akses; ?></option>
+                                        <?php } else { ?>
+                                    <option value="<?php echo $c->id_hak_akses ?>"><?php echo $c->hak_akses; ?></option>
+                                    <?php } endforeach; ?>
                                 </select>
                         </div>
                     </div>

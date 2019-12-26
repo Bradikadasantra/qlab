@@ -52,9 +52,22 @@
                                         <input type="text" class="form-control" name="nama_sampel" id="nama_sampel" placeholder="Nama Sampel" value="<?php echo set_value('nama_sampel') ?>">
                                         <?php echo form_error('nama_sampel','<small class="text-danger pl-3">','</small>') ?>
                                     </div>
+
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="pemerian" id="pemerian" placeholder="Pemerian" value="<?php echo set_value('pemerian') ?>">
-                                        <?php echo form_error('pemerian','<small class="text-danger pl-3">','</small>') ?>
+                                      <div class="input-group">
+                                            <select class="form-control" name="pemerian">
+                                                    <option value=" " selected>~ Pemerian~</option>
+                                                    <?php 
+                                                        $kueri = $this->db->query("SELECT * FROM pemerian")->result();
+                                                        foreach ($kueri as $pem): ?>
+                                                        <option value="<?php echo $pem->id_pemerian?>"><?php echo $pem->pemerian; ?></option>
+                                                        <?php endforeach;  ?>
+                                            </select>
+                                       <div class="input-group-append">
+                                            <a href="#pemerian" data-toggle="modal" class="btn btn-primary btn-sm"><i class="fas fa-plus fa-sm"></i></a>
+                                       </div>
+                                      </div> 
+                                      <?php echo form_error('pemerian','<small class="text-danger pl-3">','</small>') ?> 
                                     </div>
 
                                     <div class="form-group">
@@ -68,13 +81,37 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="kemasan" id="kemasan" placeholder="Kemasan" value="<?php echo set_value('kemasan') ?>">
-                                        <?php echo form_error('kemasan','<small class="text-danger pl-3">','</small>') ?>
+                                      <div class="input-group">
+                                            <select class="form-control" name="kemasan">
+                                                    <option value=" " selected>~ Kemasan~</option>
+                                                    <?php 
+                                                        $kuer = $this->db->query("SELECT * FROM kemasan")->result();
+                                                        foreach ($kuer as $kem): ?>
+                                                        <option value="<?php echo $kem->id_kemasan?>"><?php echo $kem->kemasan; ?></option>
+                                                        <?php endforeach;  ?>
+                                            </select>
+                                       <div class="input-group-append">
+                                            <a href="#kemasan" data-toggle="modal" class="btn btn-primary btn-sm"><i class="fas fa-plus fa-sm"></i></a>
+                                       </div>
+                                      </div> 
+                                      <?php echo form_error('kemasan','<small class="text-danger pl-3">','</small>') ?>
                                     </div>
 
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="transportasi_sampel" id="transportasi_sampel" placeholder="Transportasi Sampel" value="<?php echo set_value('transportasi_sampel') ?>">
-                                        <?php echo form_error('transportasi_sampel','<small class="text-danger pl-3">','</small>') ?>
+                                        <div class="input-group">
+                                            <select class="form-control" name="transportasi_sampel">
+                                                    <option value=" " selected>~ Tranportasi Sampel~</option>
+                                                    <?php 
+                                                        $kue = $this->db->query("SELECT * FROM transportasi_sampel")->result();
+                                                        foreach ($kue as $trans): ?>
+                                                        <option value="<?php echo $trans->id_transportasi_sampel?>"><?php echo $trans->transportasi_sampel; ?></option>
+                                                        <?php endforeach;  ?>
+                                            </select>
+                                       <div class="input-group-append">
+                                            <a href="#transportasi_sampel" data-toggle="modal" class="btn btn-primary btn-sm"><i class="fas fa-plus fa-sm"></i></a>
+                                       </div>
+                                      </div> 
+                                      <?php echo form_error('transportasi_sampel','<small class="text-danger pl-3">','</small>') ?>
                                     </div>
 
                                     <div class="form-group">
@@ -194,6 +231,72 @@
 				  <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
 				  <a class="btn btn-danger btn-ok" href="#">Hapus</a>
 				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="modal fade" id="pemerian" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="exampleModalLabel"> Tambah Pemerian</h5>
+				  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">x</span>
+				  </button>
+				</div>
+				<div class="modal-body">
+                    <form action="<?php echo base_url('c_registrasi_sampel/tambah_pemerian')?>" method="post">
+                        <div class="form-group">
+                            <label for="pemerian">Pemerian</label>
+                            <input type="text" class="form-control" name="pemerian" id="pemerian" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Kirim">
+                    </form>
+                </div>
+			</div>
+		</div>
+	</div>
+
+    <div class="modal fade" id="kemasan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="exampleModalLabel"> Tambah Kemasan</h5>
+				  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">x</span>
+				  </button>
+				</div>
+				<div class="modal-body">
+                    <form action="<?php echo base_url('c_registrasi_sampel/tambah_kemasan')?>" method="post">
+                        <div class="form-group">
+                            <label for="kemasan">Kemasan</label>
+                            <input type="text" class="form-control" name="kemasan" id="kemasan" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Kirim">
+                    </form>
+                </div>
+			</div>
+		</div>
+	</div>
+
+    <div class="modal fade" id="transportasi_sampel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="exampleModalLabel"> Tambah Transportasi Sampel</h5>
+				  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">x</span>
+				  </button>
+				</div>
+				<div class="modal-body">
+                    <form action="<?php echo base_url('c_registrasi_sampel/tambah_transportasi')?>" method="post">
+                        <div class="form-group">
+                            <label for="transportasi_sampel">Transportasi Sampel</label>
+                            <input type="text" class="form-control" name="transportasi_sampel" id="transportasi_sampel" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Kirim">
+                    </form>
+                </div>
 			</div>
 		</div>
 	</div>

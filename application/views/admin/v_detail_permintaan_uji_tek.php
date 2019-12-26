@@ -28,10 +28,20 @@
                                     <tbody>
                                             <tr><td>Nama Sampel</td><td><?php echo $baris->nama_sampel ?></td></tr>
                                             <tr><td>Nomor Sampel</td><td><?php echo $baris->no_sampel ?></td></tr>
-                                            <tr><td>Pemerian</td><td><?php echo $baris->pemerian ?></td></tr>
+                                            <tr><td>Pemerian</td><td>
+                                            <?php $pemerian = $this->m_registrasi_sampel->get_by_id('pemerian', 'id_pemerian', $baris->pemerian);
+                                             echo $pemerian->pemerian;?>
+                                            </td></tr>
                                             <tr><td>Kode Batch</td><td><?php echo $baris->kode_batch ?></td></tr>
-                                            <tr><td>Kemasan</td><td><?php echo $baris->kemasan ?></td></tr>
-                                            <tr><td>Transportasi Sampel</td><td><?php $baris->transportasi_sampel ?></td></tr>
+                                            <tr><td>Kemasan</td><td>
+                                            <?php $kemasan = $this->m_registrasi_sampel->get_by_id('kemasan', 'id_kemasan', $baris->kemasan);
+                                            echo $kemasan->kemasan;?>
+                                            </td></tr>
+                                            <tr><td>Transportasi Sampel</td><td>
+                                            <?php 
+                                              $trans = $this->m_registrasi_sampel->get_by_id('transportasi_sampel', 'id_transportasi_sampel', $baris->transportasi_sampel);
+                                            echo $trans->transportasi_sampel;?>
+                                            </td></tr>
                                             <tr><td>Tempat Penyimpanan</td><td><?php echo $baris->tempat_penyimpanan?></td></tr>
                                             <tr><td>Hal Lain</td><td><?php echo $baris->hal_lain ?></td></tr>
                                             <tr><td>Tgl Permohonan Uji</td><td><?php echo WKT($baris->tgl_order)?></td></tr>
@@ -62,7 +72,7 @@
                     </div> 
                         <a href="<?php echo base_url('c_permintaan_uji/approval_tek')?>" class="btn btn-primary btn-sm mt-5"><i class="fas fa-chevron-circle-left"></i> Kembali </a>   
                         <?php 
-                            $will = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $baris->no_order), array('id_bidang' => $baris->id_bidang), "(status_tinjauan_anl = '0' AND status_sampel != '3')")->num_rows();
+                            $will = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $baris->no_order), array('id_bidang' => $baris->id_bidang), "(status_tinjauan_anl = '0' AND status_sampel != '3' AND status_sampel != '6')")->num_rows();
                             if ($will > 0){
                         ?>
                         <a href="<?php echo base_url('c_permintaan_uji/kerjakan_sampel/'.$no_order.'/'.$baris->id_bidang) ?>" class="btn btn-success btn-sm mt-5"><i class="fas fa-check fa-sm"></i> Kerjakan sampel</a>

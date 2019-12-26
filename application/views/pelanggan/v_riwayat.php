@@ -108,17 +108,30 @@
                                     </thead>
                                     <tbody>
                                         <tr><td>Nama sampel</td><td><?php echo $od->nama_sampel ?></td><tr>
-                                        <tr><td>Pemerian</td><td><?php echo $od->pemerian ?></td><tr>
+                                        <tr><td>Pemerian</td><td>
+                                        <?php $pemerian = $this->m_registrasi_sampel->get_by_id('pemerian', 'id_pemerian', $od->pemerian);
+                                        echo $pemerian->pemerian;?>
+                                        </td><tr>
                                         <tr><td>Kode Batch</td><td><?php echo $od->kode_batch ?></td><tr>
                                         <tr><td>Jumlah</td><td><?php echo $od->jumlah ?></td><tr>
-                                        <tr><td>Kemasan</td><td><?php echo $od->kemasan ?></td><tr>
-                                        <tr><td>Transportasi Sampel</td><td><?php echo $od->transportasi_sampel ?></td><tr>
+                                        <tr><td>Kemasan</td><td>
+                                        <?php 
+                                              $kemasan = $this->m_registrasi_sampel->get_by_id('kemasan', 'id_kemasan', $od->kemasan);
+                                            echo $kemasan->kemasan;?>
+                                        </td><tr>
+                                        <tr><td>Transportasi Sampel</td><td>
+                                        <?php 
+                                              $trans = $this->m_registrasi_sampel->get_by_id('transportasi_sampel', 'id_transportasi_sampel', $od->transportasi_sampel);
+                                            echo $trans->transportasi_sampel;?>
+                                        </td><tr>
                                         <tr><td>Tempat Penyimpanan</td><td><?php echo $od->tempat_penyimpanan ?></td><tr>
                                         <tr><td>Hal Lain</td><td><?php echo $od->hal_lain ?></td><tr>
                                         <tr><td>
-                                                Status Sampel</td><td><?php echo StatusSampel($od->status_sampel) ?>
+                                                Status Sampel</td><td>
+                                                <?php echo StatusSampel($od->status_sampel) ?>
+                                              
                                                 <?php 
-                                                    if ($od->status_sampel == 2 or $od->status_sampel == 3 OR $od->status_sampel == 4 OR $od->status_sampel == 5 OR $od->status_sampel == 6 ){
+                                                    if ($od->status_tinjauan_mt != 0 AND $od->status_sampel != 6){
                                                 ?>
                                                    <a href="<?php echo base_url('c_permintaan_uji/hasilTinjauan_mt/'.$od->id_sampel) ?>" class="text-primary p-4" style="font-style:italic;" > Lihat Tinjauan</a>
                                                     <?php } else { }?>
@@ -156,14 +169,23 @@
                                     </div>
                                 <?php } else { } ?>
 
+                         <!--
                                 <?php 
                                     if ($od->status_sampel == 0){
                                 ?>
-                                <small><a href="<?php echo base_url('c_registrasi_sampel/edit_PermohonanSampel/'.$od->id_order_detail)?>" class=" col-md-2 offset-10"><i class="fas fa-edit fa-sm"></i> Ubah</a></small>
+                                <small><a href="<?php echo base_url('c_registrasi_sampel/edit_PermohonanSampel/'.$od->id_sampel)?>" class=" col-md-2 offset-10"><i class="fas fa-edit fa-sm"></i> Ubah</a></small>
                                     <?php }else { ?>
-                                        <small><a href="<?php echo base_url('c_registrasi_sampel/edit_PermohonanSampel/'.$od->id_order_detail)?>" class="col-md-2 offset-10" style="pointer-events:none; cursor:default; color:grey;"><i class="fas fa-edit fa-sm"></i> Ubah</a></small>
+                                        <small><a href="<?php echo base_url('c_registrasi_sampel/edit_PermohonanSampel/'.$od->id_sampel)?>" class="col-md-2 offset-10" style="pointer-events:none; cursor:default; color:grey;"><i class="fas fa-edit fa-sm"></i> Ubah</a></small>
                                     <?php } ?>
-                            </div>
+                            -->
+                            <!--
+                            <?php if ($baris->status == 0) {?>
+                          <a href="#mymodal"  data-id="<?php echo base_url('c_registrasi_sampel/batalkan_pelanggan/'.$od->id_sampel) ?>" data-toggle="modal" class="btn btn-outline-danger mb-5 btn-sm"> Batalkan Pengujian</a>
+                            <?php } else { ?>
+                                <a href="#" class="btn btn-outline-secondary mb-5 btn-sm"> Batalkan Pengujian</a>
+                            <?php } ?>
+                                -->
+                            </div> 
                             <?php endforeach;?>
                         </div>
                             <?php 
@@ -220,6 +242,24 @@
 					<span aria-hidden="true">x</span>
 				  </button>
 				</div>
+				<div class="modal-body">Anda yakin ingin membatalkan pengujian sampel ini  ?</div>
+				<div class="modal-footer">
+				  <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+				  <a class="btn btn-danger btn-ok" href="#"> Ya</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="exampleModalLabel">Konfirmasi</h5>
+				  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">x</span>
+				  </button>
+				</div>
 				<div class="modal-body">Anda yakin ingin membatalkan pengujian ?</div>
 				<div class="modal-footer">
 				  <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
@@ -230,7 +270,6 @@
 	</div>
 </div>  
 <script>
-// konfirmasi sampel
 
 //sampel jika ya
 $(document).ready(function() {
@@ -242,6 +281,13 @@ $(document).ready(function() {
 //sampel jika tidak
 $(document).ready(function() {
         $('#konfirmasi_sampel_tidak').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('id'));
+        });
+    });
+
+// pembatalan by pelanggan 
+$(document).ready(function() {
+        $('#mymodal').on('show.bs.modal', function(e) {
             $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('id'));
         });
     });

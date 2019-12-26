@@ -58,7 +58,7 @@ class C_bahan_uji extends CI_Controller {
     }
 
     public function hapus_bahan($id_bahan){
-		if ($this->session->userdata('hak_akses') != "admin_sampel"){
+		if ($this->session->userdata('hak_akses') !=  01 ){
 					echo $this->session->set_flashdata('pesan', 
 					'<script>
 								swal({

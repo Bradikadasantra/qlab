@@ -23,6 +23,12 @@
 		 return $row->total; 
 	 }
 	 
+	function hak_akses($s){
+		 $ci = get_instance();
+		 $row = $ci->m_admin->hak_akses($s)->row();
+		return  $hak_akses = $row->hak_akses; 
+	}
+	 
 function getNota($table, $param, $kode) {
 @$today = date("Ymd");
 
@@ -100,7 +106,7 @@ function setNoSampel($kode, $tgl_order) {
 	$hsl = $ci->db->query($qri);
 	$row = $hsl->row();	
 	$lastNo = $row->last;
-	$code=$kode;
+	$code=$kode;	
 	$lastNoUrut = substr($lastNo, 1, 3); 
 
 	$nextNoUrut = $lastNoUrut + 1;
@@ -117,7 +123,7 @@ function setNoSampel($kode, $tgl_order) {
 		$qri = "SELECT MAX(no_tagihan) AS last FROM tagihan";
 		$row = $ci->db->query($qri)->row();
 	
-		$lastNo = substr($row->last,11);
+		$lastNo = substr($row->last,7);
 		$urut = $lastNo+1;
 		if ($urut < 10){
 		$lastNoUrut = $kode.$tahun.".0000".$urut;
@@ -209,7 +215,7 @@ function status($s){
 	$cari = $ci->db->query($query)->row();
 	$status = $cari->status; 
 	
-	if ($hak_akses == 'Super Admin'){
+	if ($hak_akses == 1){
 		switch ($status){
 			case 0 :return '<span class="badge badge-danger"><i class="fas fa-minus fa-sm"></i></span> Belum dikerjakan';break;
 			case 1 :return '<span class="badge badge-success"><i class="fas fa-minus fa-sm"></i></span> sudah dikerjakan';break;
@@ -225,7 +231,7 @@ function status($s){
 			
 		}
 	}	
-	else if ($hak_akses == 'manajer_teknik'){
+	else if ($hak_akses == 6){
 		switch ($status){
 			case 1 :return '<span class="badge badge-danger"><i class="fas fa-minus fa-sm"></i></span> Belum dikerjakan';break;
 			case 2 :return '<span class="badge badge-success"><i class="fas fa-check fa-sm"></i></span> Sudah dikerjakan';break;
@@ -235,23 +241,22 @@ function status($s){
 			case 6 :return '<span class="badge badge-success"><i class="fas fa-check fa-sm"></i></span> Sudah dikerjakan';break;
 			case 7 :return '<span class="badge badge-success"><i class="fas fa-check fa-sm"></i></span> Sudah dikerjakan';break;
 			case 10 :return '<span class="badge badge-success"><i class="fas fa-check fa-sm"></i></span> Sudah dikerjakan';break;
-			
 		}
 	}
 	
-	else if ($hak_akses == 'analis'){
+	else if ($hak_akses == 7){
 		switch($status){
 			case 7 :return '<span class="badge badge-danger"><i class="fas fa-minus fa-sm"></i></span> Belum dikerjakan';break;
+			}
 		}
 	}
-}
 
 		//status sampel 
 		function StatusSampel($s){
 			$ci = get_instance();
 			$hak_akses = $ci->session->userdata('hak_akses');
 			
-			if ($hak_akses == 'Super Admin'){
+			if ($hak_akses ==  1){
 			switch ($s){
 				case 0 :return '<span class="badge badge-danger"> Belum Diterima</span>';break;
 				case 1 :return '<span class="badge badge-success"> Diterima</span>';break;
@@ -259,28 +264,31 @@ function status($s){
 				case 3 :return '<span class="badge badge-danger"> Ditolak MT</span>';break;
 				case 4 :return '<span class="badge badge-info"> Disetujui MT dengan catatan *</span>';break;
 				case 5 :return '<span class="badge badge-warning"> Dikonfirmasi pelanggan*</span>';break;
-			
+				case 6 :return '<span class="badge badge-danger"> Dibatalkan oleh pelanggan*</span>';break;
+
 				}
 			}
-			else if ($hak_akses == 'manajer_teknik'){
+			else if ($hak_akses == 6 ){
 				switch ($s){
 				case 1 :return '<span class="badge badge-warning"> Menunggu Approval</span>';break;
 				case 2 :return '<span class="badge badge-success"> Disetujui</span>';break;
 				case 3 :return '<span class="badge badge-danger"> Ditolak</span> ';break;
 				case 4 :return '<span class="badge badge-info"> Disetujui dengan catatan</span> ';break;
 				case 5 :return '<span class="badge badge-info"> Disetujui dengan catatan</span> ';break;
+				case 6 :return '<span class="badge badge-danger"> Dibatalkan oleh pelanggan*</span>';break;
 				}
 			}
-			else if ($hak_akses == 'analis'){
+			else if ($hak_akses == 7){
 				switch ($s){
 				case 2 :return '<span class="badge badge-success"> Disetujui</span>';break;
 				case 3 :return '<span class="badge badge-danger"> Ditolak</span>';break;
 				case 4 :return '<span class="badge badge-info"> Disetujui dengan catatan</span> ';break;
 				case 5 :return '<span class="badge badge-info"> Disetujui dengan catatan</span> ';break;
+				case 6 :return '<span class="badge badge-danger"> Dibatalkan oleh pelanggan*</span>';break;
 				}
 			}
 			
-			else if ($hak_akses == 'pelanggan'){
+			else if ($hak_akses == 12 ){
 				switch ($s){
 				case 0 :return '<span class="badge badge-danger"> Serahkan sampel</span>';break;
 				case 1 :return '<span class="badge badge-info"> Sampel diterima</span> ';break;
@@ -288,11 +296,12 @@ function status($s){
 				case 3 :return '<span class="badge badge-danger"> Ditolak</span> ';break;
 				case 4 :return '<span class="badge badge-info"> Disetujui dengan catatan </span>';break;
 				case 5 :return '<span class="badge badge-info"> Disetujui dengan catatan</span> ';break;
+				case 6 :return '<span class="badge badge-danger"> Dibatalkan oleh pelanggan</span>';break;
 				}
 			}
 		}
 				
-	
+				
 	function notif_navbar($id_bidang, $status, $tinjauan){
 		$ci  = get_instance();
 		$result = $ci->m_registrasi_sampel->notif_navbar($id_bidang, $status, $tinjauan)->result();
@@ -307,7 +316,7 @@ function status($s){
 			}else{
 				echo '<span class="badge badge-success"><i class="fas fa-minus fa-sm"></i></span> Sudah dikerjakan'; 
 			}
-	}
+		}
 	
 	
 	
@@ -315,27 +324,27 @@ function status($s){
 		$ci = get_instance();
 		$hak_akses  = $ci->session->userdata('hak_akses');
 		
-		if ($hak_akses == 'Super Admin'){
+		if ($hak_akses == 1 ){
 		switch ($status){
 			case 0 : return '-';  break;
 			case 1 : return 'Konfirmasi';  break;
 			case 2 : return 'Lunas';  break;
 		}
-		}else if ($hak_akses == 'pelanggan'){
+		}else if ($hak_akses == 12){
 			switch ($status){
 			case 0 : return '<button type="button" class="btn btn-outline-danger btn-sm disabled"> Belum Bayar</button>';  break;
 			case 1 : return '<button type="button" class="btn btn-outline-info btn-sm disabled"> Sudah Konfirmasi</button>';  break;
 			case 2 : return '<button type="button" class="btn btn-outline-success btn-sm disabled"> Sudah Bayar</button>';  break;
 		}
-		}else if ($hak_akses == 'manajer_teknik'){
+		}else if ($hak_akses == 6){
 			switch ($status){
 			case 0 : return '<button type="button" class="btn btn-outline-danger btn-sm disabled"> Belum Bayar</button>';  break;
 			case 1 : return '<button type="button" class="btn btn-outline-info btn-sm disabled"> Sudah Konfirmasi</button>';  break;
 			case 2 : return '<button type="button" class="btn btn-outline-success btn-sm disabled"> Sudah Bayar</button>';  break;
 		}
-		}
-	
 	}
+	
+}
 
 
 function StatusSertifikat($s){
@@ -347,6 +356,21 @@ function StatusSertifikat($s){
 		case 4 :return '<span class="badge badge-info"> Diajukan ulang</span>';break;
 	}
 }
+
+
+function StatusDokumen($s){
+	switch ($s){
+		case 0 :return '<span class="badge badge-info">Diajukan</span>';break;
+		case 1 :return '<span class="badge badge-success"> Disetujui</span>';break;
+		case 2 :return '<span class="badge badge-danger"> Disahkan</span>';break;
+		case 3 :return '<span class="badge badge-danger"> Ditolak</span>';break;
+
+		}
+}
+
+
+
+
 function aktif($s){
 	switch ($s){
 		case 0 :return 'Tidak Aktif';break;
@@ -377,77 +401,4 @@ function terbilang($x){
 }
 
 
-function GetStatus_Sampel($no_order){
-	$query = "SELECT status_pemeriksaan FROM `order` JOIN (order_detail JOIN(sampel JOIN pemeriksaan ON sampel.id_sampel = pemeriksaan.id_sampel) 
-	ON order_detail.id_order_detail = sampel.id_order_detail) ON `order`.no_order = order_detail.no_order WHERE `order`.no_order = '$no_order' AND status_pemeriksaan = 2";
-	
-	$ci = get_instance();
-	$run = $ci->db->query($query)->num_rows();
-	if ($run >= 1){
-		echo StatusPemeriksaan(1);
-	}
-	else{
-		echo StatusPemeriksaan(0);
-	}
-}
-
-function GetStatus_SampelDiterima($no_order){
-	$query = "SELECT status_sampel FROM `order` JOIN (order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail) ON
-	`order`.no_order = order_detail.no_order WHERE `order`.no_order = '$no_order' AND (status_sampel = 1 OR status_sampel = 2 OR status_sampel = 3)";
-	
-	$ci = get_instance();
-	$hasil = $ci->db->query($query)->num_rows();
-	
-	if ($hasil >= 1){
-		echo StatusSampel(1);
-	}else{
-		echo StatusSampel(0);
-	}	
-}
-
-function GetStatus_SampelDikerjakan($no_order){
-	$query = "SELECT status_sampel FROM `order` JOIN (order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail) ON
-	`order`.no_order = order_detail.no_order WHERE `order`.no_order = '$no_order' AND status_sampel = 3";
-	
-	$ci = get_instance();
-	$hasil = $ci->db->query($query)->num_rows();
-	
-	if ($hasil >= 1){
-		echo StatusSampel(3);
-	}else{
-		echo StatusSampel(2);
-	}	
-	
-}
-
-function GetStatus_Sertifikat($no_order){
-	$q1  = "SELECT status_sertifikat FROM `order` JOIN (order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail) ON 
-	`order`.no_order = order_detail.no_order WHERE  `order`.no_order = '$no_order'";
-	
-	$q2	 = "SELECT status_sertifikat FROM `order` JOIN (order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail) ON 
-	`order`.no_order = order_detail.no_order WHERE `order`.no_order = '$no_order' AND status_sertifikat = 1";
-	
-	$q3  = "SELECT status_sertifikat FROM `order` JOIN (order_detail JOIN sampel ON order_detail.id_order_detail = sampel.id_order_detail) ON 
-	`order`.no_order = order_detail.no_order WHERE  `order`.no_order = '$no_order' AND status_sertifikat = 2";
-	
-	$ci = get_instance();
-	$run1 = $ci->db->query($q1)->result();
-	$hitung1 = count($run1);
-	
-	$run2 = $ci->db->query($q2)->result();
-	$hitung2 = count($run2);
-	
-	$run3 = $ci->db->query($q3)->result();
-	$hitung3 = count($run3);
-	
-	if ($hitung3 == $hitung1){
-		echo StatusSertifikat(2);
-	}else if ($hitung2 >= $hitung3 or $hitung3 >= $hitung2){
-		echo StatusSertifikat(1);
-	}else{
-		echo StatusSertifikat(3);
-	}
-	
-}
-	
 

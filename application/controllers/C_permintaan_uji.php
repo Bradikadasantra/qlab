@@ -43,7 +43,7 @@ class C_permintaan_uji extends CI_Controller {
 
     public function terima_sa($no_order){
     $row  = $this->m_registrasi_sampel->get_by_id('order_detail','no_order', $no_order);   
-    $search = $this->m_registrasi_sampel->order_orderDetail(array('order.no_order'=> $no_order))->result();
+    $search = $this->m_registrasi_sampel->all_data_perbidang(array('order.no_order'=> $no_order),array('id_sampel !='=> 6))->result();
       $data = array(
         'status'          => 1
       ); 
@@ -82,22 +82,22 @@ class C_permintaan_uji extends CI_Controller {
         $get = $this->m_registrasi_sampel->get_by_id('admin','id_auth', $this->session->userdata('id_auth'));
         $row = $this->m_registrasi_sampel->get_by_id('order','no_order',$no_order);
 
-        if ($hak_akses == 'Super Admin'){
+        if ($hak_akses == 1){
             $data['status']     = $row->status; 
             $data ['no_order']  = $no_order;
             $data['detail'] = $this->m_registrasi_sampel->all_data_order($where)->result();
             $this->templates->utama('admin/v_detail_permintaan_uji_sa', $data); 
         }
-        else if ($hak_akses == 'manajer_teknik'){
+        else if ($hak_akses == 6 ){
             $data['status']     = $row->status; 
             $data ['no_order']  = $no_order;
-            $data['detail']     = $this->m_registrasi_sampel->all_data_perbidang($where, array('id_bidang'=> $get->id_bidang))->result();
+            $data['detail']     = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang'=> $get->id_bidang), array('status_sampel !='=> 6))->result();
             $this->templates->utama('admin/v_detail_permintaan_uji_mt', $data);
         }
         else {
             $data['status']     = $row->status; 
             $data ['no_order']  = $no_order;
-            $data['detail'] = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang' => $get->id_bidang), array('status_sampel !=' => 3))->result();
+            $data['detail'] = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang' => $get->id_bidang), "(status_sampel != '3' and status_sampel != '6')")->result();
             $this->templates->utama('admin/v_detail_permintaan_uji_tek', $data);
         }
     }
@@ -108,10 +108,10 @@ class C_permintaan_uji extends CI_Controller {
         $where      = array ('id_auth'=> $id_auth);
         $cari       = $this->m_admin->cari_admin($where)->row();
         $id_bidang  = $cari->id_bidang; 
-        $where = 'status != 0';
+        $where = "(status != '0' AND status_sampel != '6')";
         $where2 = "(status = '6' AND status_sampel = '5')";
         
-        if ($hak_akses == 'manajer_teknik'){
+        if ($hak_akses == 6 ){
               $data['id_bidang'] = $id_bidang;
               $data['list']   = $this->m_registrasi_sampel->tampil_perbidang(array('id_bidang' => $id_bidang), $where)->result();
               $data['list_2'] = $this->m_registrasi_sampel->tampil_perbidang(array('id_bidang' => $id_bidang), $where2)->result();
@@ -126,14 +126,14 @@ class C_permintaan_uji extends CI_Controller {
     $qry        = "SELECT id_bidang FROM sampel WHERE id_sampel = {$id_sampel}";
     $run        = $this->db->query($qry)->row();
     $id_bidang  = $run->id_bidang; 
-    $ss = $this->m_admin->admin_auth(array('id_bidang'=> $id_bidang), array('hak_akses' => 'manajer_teknik'))->row();
+    $ss = $this->m_admin->admin_auth(array('id_bidang'=> $id_bidang), array('hak_akses' => 6))->row();
     $hak_akses = $ss->hak_akses; 
 
     $row = $this->m_registrasi_sampel->get_by_id('sampel', 'id_sampel', $id_sampel);
     $row2 = $this->m_registrasi_sampel->get_by_id('order_detail', 'id_order_detail', $row->id_order_detail);
 
 
-      if ($id_bidang == 'M' && $hak_akses == 'manajer_teknik' ){
+      if ($id_bidang == 'M' && $hak_akses == 6 ){
         $data = array(
           'id_sampel'           => $id_sampel,
           'hak_akses'           => $hak_akses,
@@ -144,7 +144,7 @@ class C_permintaan_uji extends CI_Controller {
           'back'                => base_url('c_permintaan_uji/detail_permintaan/'.$row2->no_order)
         );
       }
-      else if ($id_bidang == 'K' && $hak_akses == 'manajer_teknik'){
+      else if ($id_bidang == 'K' && $hak_akses == 6){
         $data = array(
           'id_sampel'            => $id_sampel,
           'id_admin'             => $ss->id_admin,
@@ -154,7 +154,7 @@ class C_permintaan_uji extends CI_Controller {
           'back'                 => base_url('c_permintaan_uji/detail_permintaan/'.$row2->no_order)
         );
       }
-      else if ($id_bidang == 'F' && $hak_akses == 'manajer_teknik'){
+      else if ($id_bidang == 'F' && $hak_akses == 6){
         $data = array(
           'id_sampel'           => $id_sampel,
           'id_admin'            => $ss->id_admin,
@@ -184,7 +184,7 @@ class C_permintaan_uji extends CI_Controller {
       if ($this->form_validation->run() == false){
         $this->tindak_lanjut_mt($id_sampel);
       }else{  
-        if ($this->session->userdata('hak_akses') == 'manajer_teknik'){
+        if ($this->session->userdata('hak_akses') == 6){
             $kesiapan_teknik = $this->input->post('kesiapan_teknik[]');
             $diubah = serialize($kesiapan_teknik);
                 $data = array(
@@ -253,11 +253,11 @@ class C_permintaan_uji extends CI_Controller {
     public function mt_selesai2($no_order, $id_bidang){
 
       $where = array('order.no_order'=> $no_order);
-      $default  = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $no_order),array('id_bidang'=> $id_bidang), array('status_sampel != '=> 3))->result();
-      $cek_1 = $this->m_registrasi_sampel->all_data_order(array('order.no_order' => $no_order))->result();
-      $cek_2 = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $no_order), array('id_bidang' => $id_bidang),'status_tinjauan_mt = 1')->result();
+      $default  = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $no_order),array('id_bidang'=> $id_bidang), array('status_sampel != '=> 6))->result();
+      $cek_1 = $this->m_registrasi_sampel->all_data_perbidang($where, array('status_sampel !=' => 6))->result();
+      $cek_2 = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang' => $id_bidang),"(status_tinjauan_mt = '1' AND status_sampel != '6')")->result();
       
-      $check  = count($this->m_registrasi_sampel->sampel_siap_uji($where)->result());
+      $check  = count($this->m_registrasi_sampel->all_data_perbidang($where, array('status_sampel !=' => 6))->result());
       $check_1= count($this->m_registrasi_sampel->all_data_perbidang($where, array('status_sampel' => 2))->result());
       $check_3= count($this->m_registrasi_sampel->all_data_perbidang($where, array('status_sampel' => 3))->result());
      
@@ -270,7 +270,7 @@ class C_permintaan_uji extends CI_Controller {
         $data = array(
           'status'      => 3
         );
-        }else{
+      }else{
             $data = array(
               'status'    => 4
             );
@@ -281,11 +281,11 @@ class C_permintaan_uji extends CI_Controller {
         }
         $run = $this->m_registrasi_sampel->update(array('no_order' => $no_order),$data, 'order');
 
-      }else{;
-            $kueri =  $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang !=' => $id_bidang), "(status_tinjauan_mt = '1' OR status_tinjauan_mt = '0')");
+      }else{
+            $kueri =  $this->m_registrasi_sampel->all_data_perbidang2($where, "(id_bidang != '$id_bidang' AND status_sampel != '6')", "(status_tinjauan_mt = '1' OR status_tinjauan_mt = '0')");
             if ($kueri->num_rows() > 0){
             
-                $cari_idsampel = $this->m_registrasi_sampel->all_data_perbidang($where, array('id_bidang'=>$id_bidang))->result();
+                $cari_idsampel = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang'=>$id_bidang), array('id_bidang !=' => 6))->result();
                   foreach ($cari_idsampel as $row){
                     $t = array('status_tinjauan_mt' => 2);
                     $run = $this->m_registrasi_sampel->update(array('id_sampel' => $row->id_sampel), $t, 'sampel');
@@ -339,7 +339,7 @@ class C_permintaan_uji extends CI_Controller {
     $hak_akses = $this->session->userdata('hak_akses');
 
 
-    if ($hak_akses == 'manajer_teknik'){
+    if ($hak_akses == 6){
       $data = array (
         'id_sampel'       => $id_sampel,
         'bidang'          => $run->id_bidang,
@@ -354,7 +354,7 @@ class C_permintaan_uji extends CI_Controller {
         'action'          => '',
         'back'            => base_url('c_permintaan_uji/detail_permintaan/'.$row2->no_order)
         );
-    }else if ($hak_akses == 'pelanggan'){
+    }else if ($hak_akses == 12){
       $data = array (
         'id_sampel'       => $id_sampel,
         'bidang'          => $run->id_bidang,
@@ -369,7 +369,7 @@ class C_permintaan_uji extends CI_Controller {
         'action'          => base_url('c_permintaan_uji/action_konfirmasiPelanggan'),
         'back'            => base_url('c_pelanggan/tampil_riwayat')
         );
-    }else if ($hak_akses == 'analis'){
+    }else if ($hak_akses == 7){
       $data = array (
         'id_sampel'       => $id_sampel,
         'bidang'          => $run->id_bidang,
@@ -517,14 +517,14 @@ class C_permintaan_uji extends CI_Controller {
       $where      = array ('id_auth'=> $id_auth);
       $cari       = $this->m_admin->cari_admin($where)->row();
       $id_bidang  = $cari->id_bidang;
-      $where = "(status = '2' AND status_sampel != '3')"; 
-      $where2 = "(status = '7' OR status = '8' OR status = '9' OR status = '10')";
+      $where = "(status = '2' AND status_sampel != '3' AND status_sampel != '6' AND status_tinjauan_anl = '0')"; 
+      $where2 = "(status = '2' OR status = '8' OR status = '9' OR status = '10')";
       $where3 = "(status = '9' AND status_sertifikat = '3')";
 
-      if ($hak_akses == 'analis'){
+      if ($hak_akses == 7){
           $data['id_bidang'] = $id_bidang; 
           $data['permintaan'] = $this->m_registrasi_sampel->tampil_perbidang(array('id_bidang' => $id_bidang), $where)->result();
-          $data['permintaan_2'] = $this->m_registrasi_sampel->tampil_perbidang("(id_bidang = '$id_bidang' AND status_sampel != '3')", $where2)->result();
+          $data['permintaan_2'] = $this->m_registrasi_sampel->tampil_perbidang("(id_bidang = '$id_bidang' AND status_sampel != '3' AND status_sampel != '6')", $where2)->result();
           $data['permintaan_3'] = $this->m_registrasi_sampel->tampil_perbidang(array('id_bidang' => $id_bidang), $where3)->result();
           $this->templates->utama('admin/v_permintaan_uji_tek', $data); 
       }else{
@@ -534,30 +534,15 @@ class C_permintaan_uji extends CI_Controller {
 
     public function kerjakan_sampel($no_order, $id_bidang){
       
-      // cek jumlah sampel apakah sampel yang akan dikerjakan bidangnya sama ?
       $where = array('order.no_order' => $no_order);
-      $cek   = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang !=' => $id_bidang), "(status_sampel != '3' AND status_tinjauan_anl = 0)");     
-      $kueri = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang'=> $id_bidang), "(status_sampel != '3' AND status_tinjauan_anl = '0')");
-      if ($cek->num_rows() > 0){
-          foreach ($kueri->result() as $baris){
-            $data = array(
-              'status_tinjauan_anl' => 1
-            );
-            $run = $this->m_registrasi_sampel->update(array('id_sampel'=>$baris->id_sampel), $data, 'sampel');
-          }
-      }else{
+      $kueri = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang'=> $id_bidang), "(status_sampel != '3' AND status_sampel != '6' AND status_tinjauan_anl = '0')");
           foreach ($kueri->result() as $baris){
             $data = array(
               'status_tinjauan_anl' => 1
             );
             $run = $this->m_registrasi_sampel->update(array('id_sampel'=> $baris->id_sampel), $data, 'sampel');
           }    
-          $datapain = array(
-            'status'  => 7
-          );
-          $change = $this->m_registrasi_sampel->update($where, $datapain, 'order');
-      }
-        if ($run = 1 AND $change = 1){
+        if ($run = 1){
           echo $this->session->set_flashdata('pesan', 
           '<script>
           swal("Success !", "Sampel dikerjakan !", "success"); 
@@ -584,10 +569,10 @@ class C_permintaan_uji extends CI_Controller {
 
     $where  = array('order.no_order' => $no_order);
     $where2 = array('id_bidang' => $id_bidang);
-    $where3 = 'status_sampel != 3'; 
+    $where3 = "(status_sampel != '3' AND status_sampel != '6')"; 
     $where4 = 'status_sertifikat = 3';    
   
-        if ($hak_akses == 'analis'){
+        if ($hak_akses == 7 ){
             if ($kode == 'input_hasil'){
               $data['detail']  = $this->m_registrasi_sampel->all_data_perbidang2($where, $where2, $where3)->result();
               $data['no_order'] = $no_order; 
@@ -742,8 +727,8 @@ class C_permintaan_uji extends CI_Controller {
 
   public function ajukan_sertifikasi($no_order, $id_bidang){
 
-      $cek    = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order'=> $no_order), array('id_bidang !='=> $id_bidang), "status_sertifikat = 0 AND status_sampel != 3")->num_rows();
-      $search = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $no_order), array('id_bidang'=> $id_bidang), 'status_sampel != 3')->result();
+      $cek    = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order'=> $no_order), array('id_bidang !='=> $id_bidang), "status_sertifikat = 0 AND status_sampel != 3 AND status_sampel != '6'")->num_rows();
+      $search = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order' => $no_order), array('id_bidang'=> $id_bidang), "(status_sampel != '3' AND status_sampel != '6')")->result();
       if ($cek > 0){
         foreach ($search as $baris){
           $data  = array(
@@ -817,7 +802,7 @@ class C_permintaan_uji extends CI_Controller {
       $cari       = $this->m_admin->cari_admin($where)->row();
       $id_bidang  = $cari->id_bidang;
 
-      if ($hak_akses == 'manajer_teknik'){
+      if ($hak_akses == 6){
 
         $data['id_bidang'] = $id_bidang; 
         $data['detail'] = $this->m_registrasi_sampel->tampil_perbidang( "(id_bidang = '$id_bidang' AND status_sampel != '3')", "(status = '8' OR status = '9' OR status = '10')")->result();
@@ -835,11 +820,11 @@ class C_permintaan_uji extends CI_Controller {
       $cari       = $this->m_admin->cari_admin($where)->row();
       $id_bidang  = $cari->id_bidang;
 
-        if ($hak_akses == 'manajer_teknik'){
+        if ($hak_akses == 6){
             if ($kode == 'approve'){
               $data['no_order'] = $no_order; 
               $data['id_bidang'] = $id_bidang; 
-              $data['detail']  = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order'=> $no_order), array('id_bidang'=> $id_bidang), 'status_sertifikat != 0')->result();
+              $data['detail']  = $this->m_registrasi_sampel->all_data_perbidang2(array('order.no_order'=> $no_order), array('id_bidang'=> $id_bidang), 'status_sertifikat  != 0')->result();
             
             }else if ($kode == 'approve_ulang'){
               $data['no_order'] = $no_order; 
@@ -942,10 +927,10 @@ class C_permintaan_uji extends CI_Controller {
     public function selesai_setujuHasilPemeriksaan($no_order, $id_bidang){
         $_no_order = array('order.no_order'=> $no_order);
       
-        $cek = $this->m_registrasi_sampel->all_data_perbidang2($_no_order, array('status_sertifikat' => 3), array('status_sampel !=' => 3))->num_rows();
-        $default = $this->m_registrasi_sampel->all_data_perbidang2($_no_order, array('id_bidang'=> $id_bidang), array('status_sampel !='=> 3))->result();
+        $cek = $this->m_registrasi_sampel->all_data_perbidang2($_no_order, array('status_sertifikat' => 3), "(status_sampel != '3' AND status_sampel != '6')")->num_rows();
+        $default = $this->m_registrasi_sampel->all_data_perbidang2($_no_order, array('id_bidang'=> $id_bidang), "(status_sampel != '3' AND status_sampel != '6')")->result();
        
-        $cel  = $this->m_registrasi_sampel->all_data_perbidang($_no_order, array('status_sampel !='=> 3))->result(); 
+        $cel  = $this->m_registrasi_sampel->all_data_perbidang($_no_order, "(status_sampel != '3' AND status_sampel != '6')")->result(); 
         $cell = $this->m_registrasi_sampel->all_data_perbidang($_no_order,array('status_sertifikat'=> 2))->result();
 
         if ($cek > 0){
@@ -1056,6 +1041,12 @@ class C_permintaan_uji extends CI_Controller {
       $this->load->view('admin/v_rincian_penolakan', $data);
     }
 
+
+    public function list_sertifikat(){
+
+      $data['data'] = $this->m_registrasi_sampel->view_sertifikat(array('status_tagihan'=>2), array('status_sampel !=' => 3))->result();
+      $this->templates->utama('admin/v_list_sertifikat', $data);
+    }
 
 
 

@@ -6,6 +6,7 @@ class C_dashboard extends CI_Controller {
     public function __construct(){
 		parent:: __construct();
         $this->load->library('templates');
+        $this->load->model('m_admin');
     }
 
     public function index(){

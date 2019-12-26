@@ -17,7 +17,7 @@
 			  <h2 class="h3 mb-1">
             <?php 
                $hak_akses = $this->session->userdata('hak_akses');
-               if ($hak_akses == 'Super Admin'){
+               if ($hak_akses == 1){
                  echo "Dasboard";
                }else{
                  echo "Selamat Datang";
@@ -26,7 +26,7 @@
         </h2>
         <h5>
           <?php
-          echo $this->session->userdata('email').'&nbsp'.'<small>('.$this->session->userdata('hak_akses').')</small>';  
+          echo $this->session->userdata('email').'&nbsp'.'<small>('.hak_akses($this->session->userdata('hak_akses')).')</small>';  
           ?>
         </h5>
 			<div class="row">
@@ -40,7 +40,7 @@
 
 			<!-- Content Row -->
       <?php 
-        if ($hak_akses == 'Super Admin'){
+        if ($hak_akses == 1){
       ?>
           <div class="row">
             <!-- Earnings (Monthly) Card Example -->

@@ -110,7 +110,7 @@ class C_pelanggan extends CI_Controller {
                 '<script>
                   swal({
                   title: "Failed",
-                  text: "File Not Supported",
+                  text: "Format file tidak didukung",
                   type: "warning",
                   });
                 </script>');
@@ -121,24 +121,12 @@ class C_pelanggan extends CI_Controller {
             }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   public function print_hasilPemeriksaan($id_sampel){
     $run = $this->m_registrasi_sampel->get_by_id('sampel','id_sampel',$id_sampel);
     if ($run->status_sampel == 3 OR $run->status_sertifikat != 2){
       $hak_akses = $this->session->userdata('hak_akses');
 
-      if ($hak_akses == 'Super Admin'){
+      if ($hak_akses == 1){
 
         $data = array(
         'title'   => 'Hasil Pemeriksaan',
@@ -146,7 +134,7 @@ class C_pelanggan extends CI_Controller {
         'url'     => base_url('c_permintaan_uji/rekap_registrasiSampel')
         );
       }
-      else if ($hak_akses == 'manajer_teknik'){
+      else if ($hak_akses == 6 ){
         $data = array(
         'title'   => 'Hasil Pemeriksaan',
         'content' => 'Maaf, hasil pengujian sampel yang di uji belum keluar',
@@ -283,7 +271,7 @@ class C_pelanggan extends CI_Controller {
         $pdf->Cell(117);
         $pdf->Cell(4,3,'Fakultas Farmasi Universitas Pancasila',0,1,'L');
         $pdf->Cell(127);
-        $kueri = "SELECT nama,hak_akses,id_bidang  from admin JOIN auth ON admin.id_auth = auth.id_auth WHERE id_bidang = '$baris->id_bidang' and hak_akses = 'manajer_teknik'";
+        $kueri = "SELECT nama,hak_akses,id_bidang  from admin JOIN auth ON admin.id_auth = auth.id_auth WHERE id_bidang = '$baris->id_bidang' and hak_akses = '6'";
         $man = $this->db->query($kueri)->row();
         
         if ($man->id_bidang == 'M'){

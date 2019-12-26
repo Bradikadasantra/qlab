@@ -58,6 +58,29 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
+                    
+                    
+                        <h5 class="text-dark"> Pemeriksaan</h5>
+                            <div class="form-group">
+                            <select class="form-control sel" name="mikrobiologi[]" multiple="multiple">
+                                   
+                            <?php
+                                $ambil = $this->db->query("SELECT * FROM pemeriksaan WHERE id_sampel = '$baris->id_sampel'")->result();
+                                foreach ($kimia as $b):
+                                    foreach ($ambil as $bi){
+                                        if ($b->id_pengujian == $bi->id_pengujian){ ?>
+                                      <option value="<?php echo $b->id_pengujian ?>" selected disabled><?php echo $b->id_pengujian; ?>  </option>
+                                    
+                             <?php         
+                               }
+                                    }
+                            ?>
+                                <option value="<?php echo $b->id_pengujian ?>"><?php echo $b->id_pengujian; ?></option>
+                                <?php endforeach; ?>
+                                    
+                                    </select>   
+                            </div>
                         <div class="row mt-4">
                             <div class="col-md">
                                 <a href="<?php echo base_url('c_pelanggan/tampil_riwayat') ?>"  class="btn btn-secondary btn-sm"> Batal</a>
@@ -71,3 +94,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(".sel").select2({
+    placeholder: "Jenis Pemeriksaan"
+        });
+</script>

@@ -30,7 +30,16 @@
                                         </form>
                                     </div>
                                 </div>
-                                <a href="#" class="btn btn-outline-primary btn-sm"><i class="fas fa-print"></i> Print</a>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-print fa-fw"></i> Print
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#">Mikrobiologi</a>
+                                            <a class="dropdown-item" href="#">Kimia</a>
+                                            <a class="dropdown-item" href="#">Farmakologi</a>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     <div class="row mt-4">

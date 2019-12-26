@@ -8,7 +8,7 @@
         <div class="sidebar-brand-icon mx-1">
 			<img src="<?php echo base_url('image/logo_up.png') ?>">
         </div>
-        <div class="sidebar-brand-text mx-1">laboratorium Qlab ganti</div>
+        <div class="sidebar-brand-text mx-1">Laboratorium Qlab</div>
       </a>
 
 		<!-- Divider -->
@@ -18,7 +18,7 @@
 <?php 
     $hak_akses = $this->session->userdata('hak_akses');
 
-    if ($hak_akses == 'Super Admin'){
+    if ($hak_akses == 1){
  ?>
 
     <!-- Heading -->
@@ -86,7 +86,7 @@
       -->
 
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="<?php echo base_url('c_permintaan_uji/list_sertifikat')?>">
           <i class="fas fa-fw fa-award"></i>
           <span>Sertifikat</span></a>
       </li>
@@ -115,7 +115,7 @@
 
 <!--START MENU PELANGGAN-->
     <?php 
-      if ($hak_akses == 'pelanggan'){
+      if ($hak_akses == 12){
     ?>
     	<!-- Heading -->
 		<div class="sidebar-heading">
@@ -156,7 +156,7 @@
 
 <!--START MENU MANAJER TEKNIK-->
 <?php
-  if ($hak_akses == 'manajer_teknik'){
+  if ($hak_akses == 6) {
 ?>
 	<!-- Heading -->
   <div class="sidebar-heading">
@@ -195,7 +195,7 @@
 
 <!--START MENU TEKNIS/ANALIS-->
 <?php 
-  if ($hak_akses == 'analis'){
+  if ($hak_akses == 7){
 ?>
   <!-- Nav Item - Dashboard -->
 <li class="nav-item">
@@ -227,7 +227,7 @@
 
 <!--START MENU ALL MANAJER-->
 <?php
-  if($hak_akses == 'manajer_mutu' or $hak_akses == 'manajer_operasional' or $hak_akses == 'manajer_puncak' or $hak_akses == 'penyelia'){
+  if($hak_akses == 4 or $hak_akses == 5 or $hak_akses == 2 or $hak_akses == 8 or $hak_akses == 3){
 ?>
 <!-- Nav Item - Dashboard -->
 <li class="nav-item">

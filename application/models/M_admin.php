@@ -6,6 +6,21 @@ class M_admin extends CI_Model{
 		$this->db->insert($table,$data);
 	}
 
+	public function hak_akses($id){
+		$this->db->select('*');
+		$this->db->from('auth');
+		$this->db->join('hak_akses','hak_akses.id_hak_akses = auth.hak_akses');
+		$this->db->where('id_hak_akses', $id);
+		return $this->db->get();
+	}
+
+	public function all_hak_akses(){
+		$this->db->select('*');
+		$this->db->from('hak_akses');
+		return $this->db->get();
+	}
+
+
 	public function data_admin(){
 		$this->db->select('*');
 		$this->db->from('admin');

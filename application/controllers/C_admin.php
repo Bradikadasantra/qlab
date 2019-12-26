@@ -18,7 +18,8 @@ class C_admin extends CI_Controller {
     }
 
     public function registrasi_admin(){
-        $this->templates->utama('admin/v_registrasi_admin');
+		$data['data']  = $this->m_admin->all_hak_akses()->result();
+        $this->templates->utama('admin/v_registrasi_admin', $data);
     }
 
     public function daftar_admin(){
@@ -28,12 +29,13 @@ class C_admin extends CI_Controller {
 
     public function detail_admin(){
         $id_admin = $this->input->post('rowid');
-        $detail_admin['admin'] = $this->m_admin->detail_admin($id_admin)->result_array();
+		$detail_admin['admin'] = $this->m_admin->detail_admin($id_admin)->result_array();
+		$detail_admin['hak_akses'] = $this->m_admin->all_hak_akses()->result();
         $this->load->view('admin/v_detail_admin',$detail_admin);
     }
 
     public function hapus_admin($id_admin){
-		if ($this->session->userdata('hak_akses') != "admin_sampel"){
+		if ($this->session->userdata('hak_akses') != 1 ){
 					echo $this->session->set_flashdata('pesan', 
 					'<script>
 								swal({
@@ -365,7 +367,7 @@ class C_admin extends CI_Controller {
 }
 
 public function hapus_pelanggan($id_pelanggan){
-    if ($this->session->userdata('hak_akses') != "admin_sampel"){
+    if ($this->session->userdata('hak_akses') != 1 ){
                 echo $this->session->set_flashdata('pesan', 
                 '<script>
                             swal({
@@ -548,7 +550,7 @@ public function hapus_pelanggan($id_pelanggan){
 }
 
 public function hapus_aset($id_aset){
-	if ($this->session->userdata('hak_akses') != "admin_sampel"){
+	if ($this->session->userdata('hak_akses') != 1 ){
 				echo $this->session->set_flashdata('pesan', 
 				'<script>
 							swal({
@@ -588,7 +590,7 @@ public function hapus_aset($id_aset){
 	}
 
 	public function hapus_merk($id_merk){
-		if ($this->session->userdata('hak_akses') != "admin_sampel"){
+		if ($this->session->userdata('hak_akses') != 1 ){
 					echo $this->session->set_flashdata('pesan', 
 					'<script>
 								swal({

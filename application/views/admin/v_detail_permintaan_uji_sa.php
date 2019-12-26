@@ -28,10 +28,22 @@
                                     <tbody>
                                             <tr><td>Nama Sampel</td><td><?php echo $baris->nama_sampel ?></td></tr>
                                             <tr><td>Nomor Sampel</td><td><?php echo $baris->no_sampel ?></td></tr>
-                                            <tr><td>Pemerian</td><td><?php echo $baris->pemerian ?></td></tr>
+                                            <tr><td>Pemerian</td><td>
+                                            <?php 
+                                              $pemerian = $this->m_registrasi_sampel->get_by_id('pemerian', 'id_pemerian', $baris->pemerian);
+                                                echo $pemerian->pemerian; ?>
+                                            </td></tr>
                                             <tr><td>Kode Batch</td><td><?php echo $baris->kode_batch ?></td></tr>
-                                            <tr><td>Kemasan</td><td><?php echo $baris->kemasan ?></td></tr>
-                                            <tr><td>Transportasi Sampel</td><td><?php echo $baris->transportasi_sampel ?></td></tr>
+                                            <tr><td>Kemasan</td><td>
+                                            <?php 
+                                              $kemasan = $this->m_registrasi_sampel->get_by_id('kemasan', 'id_kemasan', $baris->kemasan);
+                                            echo $kemasan->kemasan;?>
+                                            </td></tr>
+                                            <tr><td>Transportasi Sampel</td><td>
+                                            <?php 
+                                              $trans = $this->m_registrasi_sampel->get_by_id('transportasi_sampel', 'id_transportasi_sampel', $baris->transportasi_sampel);
+                                            echo $trans->transportasi_sampel;?>
+                                            </td></tr>
                                             <tr><td>Tempat Penyimpanan</td><td><?php echo $baris->tempat_penyimpanan?></td></tr>
                                             <tr><td>Hal Lain</td><td><?php echo $baris->hal_lain ?></td></tr>
                                             <tr><td>Tgl Permohonan Uji</td><td><?php echo WKT($baris->tgl_order)?></td></tr>

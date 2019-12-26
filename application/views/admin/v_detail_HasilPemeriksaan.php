@@ -49,7 +49,17 @@
                                         <td>Terima sampel</td><td>:</td><td><?php echo WKT($baris->terima_sampel); ?></td>
                                     </tr>
                                     <tr>
-                                        <td>Status sertifikat</td><td>:</td><td><?php echo StatusSertifikat($baris->status_sertifikat) ?></td>
+                                        <td>Status sertifikat</td><td>:</td><td><?php echo StatusSertifikat($baris->status_sertifikat) ?></td>  
+                                    </tr>
+                                    <tr>
+                                        <td></td><td></td>
+                                        <td>
+                                        <?php  $rinci = $this->db->query("SELECT * FROM penolakan WHERE id_sampel = '$baris->id_sampel'")->num_rows();
+                                            if ($rinci > 0){
+                                        ?>
+                                            <small><a href="#theyModal" data-toggle="modal" data-id="<?php echo $baris->id_sampel; ?>">Rincian Penolakan</a></small>
+                                            <?php } ?>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -162,6 +172,25 @@
 		</div>
 	</div>
 
+    <div class="modal fade bd-example-modal-lg" id="theyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+                <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Rincian Penolakan</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+                    <div class="fetched-data3"></div>
+				</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Tutup</button>      
+                </div>
+			</div>
+		</div>
+	</div>
+
 <script>
     $(document).ready(function(){
         $('#weModal').on('show.bs.modal', function (e) {
@@ -173,6 +202,21 @@
     		    data :  'rowid='+ rowid,
                 success : function(data){
 					   $('.fetched-data').html(data);//menampilkan data ke dalam modal
+                }
+            });
+         });
+    });
+
+    $(document).ready(function(){
+        $('#theyModal').on('show.bs.modal', function (e) {
+			var rowid = $(e.relatedTarget).data('id');
+            //menggunakan fungsi ajax untuk pengambilan data
+            $.ajax({
+                type : 'post',
+				url : "<?php echo base_url('c_permintaan_uji/rincian_penolakan')?>",
+				 data :  'rowid='+ rowid,
+                success : function(data){
+					    $('.fetched-data3').html(data);//menampilkan data ke dalam modal
                 }
             });
          });

@@ -97,8 +97,8 @@ class Auth extends CI_Controller {
 		$data = array(
 			'email' => htmlspecialchars($this->input->post('email',true)),
 			'password' => password_hash($this->input->post('password1'),PASSWORD_DEFAULT),
-			'hak_akses' => "pelanggan",
-			'aktif' =>1,
+			'hak_akses' => 12,
+			'aktif' => 1,
 		);
 		
 		$insert = $this->m_login->registration($data,'auth');

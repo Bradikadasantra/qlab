@@ -75,16 +75,16 @@
                     <?php 
 
                         if ($this->uri->segment(4) == 'input_hasil'){
-                        $kueri  = count($this->m_registrasi_sampel->detail_order2(array('no_order'=> $no_order), array('id_bidang' => $id_bidang), 'status_sampel != 3')->result());
-                        $kueri2 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang),  'status_sampel != 3')->result());
+                        $kueri  = count($this->m_registrasi_sampel->detail_order2(array('no_order'=> $no_order), array('id_bidang' => $id_bidang), "(status_sampel != '3' AND status_sampel != '6')")->result());
+                        $kueri2 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang),  "(status_sampel != '3' AND status_sampel != '6')")->result());
                         $kueri3 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang),  'status_tinjauan_anl = 1')->result());                                            
                        if ($kueri == $kueri2 AND $kueri3 > 0){ ?>   
                              <a href="<?php echo $action; ?>" class="btn btn-success btn-sm"><i class="fas fa-check fa-sm"></i> Ajukan sertifikasi</a>
                         <?php } else{  ?>
                             <a href="#" class="btn btn-success btn-sm disabled"><i class="fas fa-check fa-sm"></i> Ajukan sertifikasi</a>
                         <?php }  }else {
-                        $kueri  = count($this->m_registrasi_sampel->detail_order2(array('no_order'=> $no_order), array('id_bidang' => $id_bidang), 'status_sampel != 3')->result());
-                        $kueri2 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang),  'status_sampel != 3')->result());
+                        $kueri  = count($this->m_registrasi_sampel->detail_order2(array('no_order'=> $no_order), array('id_bidang' => $id_bidang), "(status_sampel != '3' AND status_sampel != '6')")->result());
+                        $kueri2 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang), "(status_sampel != '3' AND status_sampel != '6')")->result());
                         $kueri3 = count($this->m_registrasi_sampel->detail_order3(array('no_order'   => $no_order), array('id_bidang' => $id_bidang),  'status_tinjauan_anl = 3')->result());                                            
                        if ($kueri == $kueri2 AND $kueri3 > 0){ ?>   
                              <a href="<?php echo $action; ?>" class="btn btn-success btn-sm"><i class="fas fa-check fa-sm"></i> Ajukan sertifikasi</a>

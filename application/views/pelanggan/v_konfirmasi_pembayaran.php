@@ -84,7 +84,7 @@
                                     </div>
                                     <div class="row mt-5">
                                         <div class="col-md">
-                                            <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-times fa-sm"></i>  Batal</a>
+                                            <a href="<?php echo base_url('c_dahsboard')?>" class="btn btn-danger btn-sm"><i class="fas fa-times fa-sm"></i>  Batal</a>
                                             <button class="btn btn-primary btn-sm" type="submit" value="Konfirmasi"><i class="fas fa-check fa-sm"></i> Konfirmasi</button>
                                         </div>
                                     </div>
