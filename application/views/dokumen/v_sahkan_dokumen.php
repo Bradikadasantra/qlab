@@ -10,15 +10,14 @@
                 ?>
             <div class="card">
                 <div class="card-body">
-                    <small><i class="fas fa-file-pdf fa-fw fa-sm"></i>  Dokumen <span class="fas fa-chevron-right fa-fw mx-1"></span> Periksa Dokumen</small>
-                    <h5 class="text-dark mt-5"> Periksa Dokumen</h5>
+                    <small><i class="fas fa-file-pdf fa-fw fa-sm"></i>  Dokumen <span class="fas fa-chevron-right fa-fw mx-1"></span> Pengesahan Dokumen</small>
+                    <h5 class="text-dark mt-5"> Pengesahan Dokumen</h5>
                     <div class="row mt-4">
                         <div class="col-md-7">
                             <?php foreach ($data as $baris): ?>
                                 <div class="alert alert-primary" role="alert">
-                                    
-                                    <a href="<?php echo base_url('c_dokumen/list_periksa_dokumen/'.$baris->id_jenis_dokumen) ?>"><?php echo $baris->nama_dokumen; ?></a>
-                                    <span class=" badge badge-danger mx-2"><?php echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pemeriksa = '$hak_akses')", "(status = '0' OR status = '4')") ?></span>
+                                    <a href="<?php echo base_url('c_dokumen/list_sahkan_dokumen/'.$baris->id_jenis_dokumen) ?>"><?php echo $baris->nama_dokumen; ?></a>
+                                    <span class=" badge badge-danger mx-2"><?php echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pengesah = '$hak_akses')", "(status = '1')") ?></span>
                                 </div>
                             <?php endforeach; ?>
                         </div>

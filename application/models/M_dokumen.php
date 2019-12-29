@@ -72,6 +72,16 @@ class M_dokumen extends CI_Model{
         return $this->db->get();
     }
 
+    public function upload_approve($where){
+        $this->db->select('*');
+        $this->db->from('upload_dokumen');
+        $this->db->join('approve_dokumen','upload_dokumen.no_dokumen = approve_dokumen.no_dokumen');
+        $this->db->where($where);
+        return $this->db->get();
+    }
+
+
+    //END
 
 
 

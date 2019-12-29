@@ -92,6 +92,29 @@ function getRomawi($bln){
                 }
 }
 
+
+function terbilang($x){
+  $abil = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
+  if ($x < 12)
+    return " " . $abil[$x];
+  elseif ($x < 20)
+    return Terbilang($x - 10) . " Belas";
+  elseif ($x < 100)
+    return Terbilang($x / 10) . " Puluh" . Terbilang($x % 10);
+  elseif ($x < 200)
+    return " Seratus" . Terbilang($x - 100);
+  elseif ($x < 1000)
+    return Terbilang($x / 100) . " Ratus" . Terbilang($x % 100);
+  elseif ($x < 2000)
+    return " Seribu" . Terbilang($x - 1000);
+  elseif ($x < 1000000)
+    return Terbilang($x / 1000) . " Ribu" . Terbilang($x % 1000);
+  elseif ($x < 1000000000)
+    return Terbilang($x / 1000000) . " Juta" . Terbilang($x % 1000000);
+	elseif ($x < 1000000000000)
+    return Terbilang($x / 1000000000) . " Milyar" . Terbilang($x % 1000000000);
+}
+
 function setNoSampel($kode, $tgl_order) {
 	$thn = substr($tgl_order,0,4);
 	$bln = substr($tgl_order,5,2);
@@ -342,10 +365,8 @@ function status($s){
 			case 1 : return '<button type="button" class="btn btn-outline-info btn-sm disabled"> Sudah Konfirmasi</button>';  break;
 			case 2 : return '<button type="button" class="btn btn-outline-success btn-sm disabled"> Sudah Bayar</button>';  break;
 		}
-	}
-	
+	}	
 }
-
 
 function StatusSertifikat($s){
 	switch ($s){
@@ -362,13 +383,38 @@ function StatusDokumen($s){
 	switch ($s){
 		case 0 :return '<span class="badge badge-info">Diajukan</span>';break;
 		case 1 :return '<span class="badge badge-success"> Disetujui</span>';break;
-		case 2 :return '<span class="badge badge-danger"> Disahkan</span>';break;
+		case 2 :return '<span class="badge badge-success"> Disahkan</span>';break;
 		case 3 :return '<span class="badge badge-danger"> Ditolak</span>';break;
+		case 4 :return '<span class="badge badge-warning"> Diajukan Ulang</span>';break;
 
 		}
 }
 
+function notif_riwayat($param, $param2){
+	$ci 	= get_instance();
+	$cek = 	$ci->m_dokumen->all_dataDokumen($param,$param2)->num_rows();
+	if ($cek > 0){
+		echo '<i class="badge badge-danger mx-1" style="font-size:13px;">!</i>';
+	}else{ }
+}
 
+function periksa_ulang($param, $param2){
+	$ci = get_instance();
+	$where = array('id_auth' => $ci->session->userdata('id_auth'));
+	$row    = $ci->m_admin->cari_admin($where)->row();
+	$cek = 	$ci->m_dokumen->all_dataDokumen($param,$param2)->num_rows();
+	if ($cek > 0){
+			return $cek;
+		}else{	}
+}
+
+function notif_JenisDokumen($param, $param2){
+	$ci 	= get_instance();
+	$cek = 	$ci->m_dokumen->all_dataDokumen($param,$param2)->num_rows();
+	if ($cek > 0){
+			return $cek;
+		}else{	}
+}
 
 
 function aktif($s){
@@ -378,27 +424,7 @@ function aktif($s){
 	}
 }
 
-function terbilang($x){
-  $abil = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
-  if ($x < 12)
-    return " " . $abil[$x];
-  elseif ($x < 20)
-    return Terbilang($x - 10) . " Belas";
-  elseif ($x < 100)
-    return Terbilang($x / 10) . " Puluh" . Terbilang($x % 10);
-  elseif ($x < 200)
-    return " Seratus" . Terbilang($x - 100);
-  elseif ($x < 1000)
-    return Terbilang($x / 100) . " Ratus" . Terbilang($x % 100);
-  elseif ($x < 2000)
-    return " Seribu" . Terbilang($x - 1000);
-  elseif ($x < 1000000)
-    return Terbilang($x / 1000) . " Ribu" . Terbilang($x % 1000);
-  elseif ($x < 1000000000)
-    return Terbilang($x / 1000000) . " Juta" . Terbilang($x % 1000000);
-	elseif ($x < 1000000000000)
-    return Terbilang($x / 1000000000) . " Milyar" . Terbilang($x % 1000000000);
-}
+
 
 
 

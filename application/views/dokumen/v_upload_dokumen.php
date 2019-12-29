@@ -108,6 +108,14 @@
                                             <div class="col-md-5">
                                                 <input type="file" class="form-control" name="dokumen" id="dokumen">
                                                 <?php echo form_error('dokumen','<small class="text-danger">','</small>') ?>
+                                                <?php 
+                                                    $hak_akses = $this->session->userdata('hak_akses');
+                                                    if ($hak_akses == 2) {
+                                                ?>
+                                                <span class="text-dark mt-2">Format file berekstensi .pdf</span>
+                                                    <?php } else{ ?>
+                                                <span class="text-dark mt-2">Format file berekstensi .docx</span>
+                                                    <?php } ?>
                                             </div>
                                         </div>
                                     </div>

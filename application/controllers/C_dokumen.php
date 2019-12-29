@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once dirname(__dir__).'../../PHPWORD/autoload.php';
+
 class C_dokumen extends CI_Controller {
 
     public function __construct(){
@@ -8,14 +9,12 @@ class C_dokumen extends CI_Controller {
         $this->load->library('templates');
         $this->load->model('m_dokumen');
         $this->load->model('m_admin');
-
-    
     }
 
     public function index(){
         $hak_akses = $this->session->userdata('hak_akses');
         $where = array('hak_akses'=> $hak_akses);
-        $dokumen['dokumen'] = $this->m_dokumen->akses_dokumen($where)->result_array();
+        $dokumen['dokumen'] = $this->m_dokumen->akses_dokumen($where)->result();
         $this->templates->utama('dokumen/v_dokumen_induk', $dokumen);
         }
 
@@ -38,6 +37,43 @@ class C_dokumen extends CI_Controller {
             );
             $this->templates->utama('pelanggan/v_error',$data);  
         }
+    }
+
+    public function riwayat(){
+        $where = array('id_auth'=> $this->session->userdata('id_auth'));
+
+        $hak_akses = $this->session->userdata('hak_akses');
+        $row       = $this->m_admin->cari_admin($where)->row();
+        //cek apakah jabatan ini memunyai hak akses untuk memngupoad dokumen ?
+
+        //$cek = $this->m_dokumen->get_pemeriksa("(dokumen_akses.hak_akses = '$hak_akses' AND aksi = 'penyusun')")->num_rows();
+        $cek = $this->db->query("SELECT * FROM upload_dokumen WHERE id_penyusun = '$row->id_admin'")->num_rows();
+        if ($cek > 0){
+            //tampilkan semua dokumen yang telah user buat
+            $data['riwayat']  = $this->db->query("SELECT * FROM upload_dokumen WHERE id_penyusun = '$row->id_admin'")->result();
+            $data['upload_ulang'] = $this->db->query("SELECT * FROM upload_dokumen WHERE id_penyusun = '$row->id_admin' AND status='3'")->result();
+            $this->templates->utama('dokumen/v_riwayat', $data);
+        }else{
+                $data = array (
+                'title'   => 'Akses Tidak Ditemukan',
+                'content' => 'Anda belum memiliki riwayat',
+                'url'     => base_url('c_dokumen'),
+            );
+            $this->templates->utama('pelanggan/v_error',$data);  
+        }   
+    }
+
+    public function detail_penolakan($no_dokumen){
+        $where = array('upload_dokumen.no_dokumen'=> $no_dokumen);
+        $data['no_dokumen'] = $no_dokumen;
+        $data['data'] = $this->m_dokumen->upload_approve($where)->result();
+        $this->templates->utama('dokumen/v_detail_penolakan', $data);
+    }
+
+    public function detail_riwayat($no_dokumen){
+        $where = array('upload_dokumen.no_dokumen'=> $no_dokumen);
+        $data['data'] = $this->m_dokumen->upload_approve($where)->result();
+        $this->templates->utama('dokumen/v_detail_riwayat',$data);
 
     }
 
@@ -82,7 +118,7 @@ class C_dokumen extends CI_Controller {
         $callback = array('list_pemeriksa'=>$lists); // Masukan variabel lists tadi ke dalam array $callback dengan index array : list_kota   
         echo json_encode($callback); // konversi varibael $callback menjadi JSON
     }
-
+    
 
     public function action_upload_dokumen(){
 
@@ -103,7 +139,7 @@ class C_dokumen extends CI_Controller {
         $this->form_validation->set_rules('jenis_dokumen','Jenis Dokumen','required|trim', array('required'=>'Pilih jenis dokumen...!'));
         $this->form_validation->set_rules('nama_dokumen','Nama Dokumen','required|trim', array('required'=>'Masukkan nama dokumen...!'));
         $this->form_validation->set_rules('pemeriksa','Pemeriksa','required|trim', array('required'=>'Pilih pemeriksa...!'));
-        $this->form_validation->set_rules('no_dokumen','Pemeriksa','required|trim', array('required'=>'Masukkan nomor dokumen...!'));
+        $this->form_validation->set_rules('no_dokumen','No Dokumen','required|trim', array('required'=>'Masukkan nomor dokumen...!'));
 
 
         if (empty($_FILES['dokumen']['name'])){
@@ -119,7 +155,7 @@ class C_dokumen extends CI_Controller {
                 if ($golongan < 4){
                     $config['upload_path']          = './dokumen/';
                     $config['allowed_types']        = 'doc|docx';
-                    $config['max_size']             = 5044070;
+                    $config['remove_space']             = true;
             
                     $this->load->library('upload', $config);
                    
@@ -187,8 +223,8 @@ class C_dokumen extends CI_Controller {
                     }       
                   }else{ //else
                     $config['upload_path']          = './dokumen/';
-                    $config['allowed_types']        = 'doc|docx';
-                    $config['max_size']             = 5044070;
+                    $config['allowed_types']        = 'pdf';
+                    $config['remove_space']         = true;
 
                     $this->load->library('upload', $config);
                 
@@ -217,8 +253,14 @@ class C_dokumen extends CI_Controller {
                         'status'           => 2,
                         'dok'              =>  $dokumen
                     );
-                    $run = $this->m_dokumen->insert($data, 'upload_dokumen');         
-                    if ($run = 1){
+                    $run = $this->m_dokumen->insert($data, 'upload_dokumen'); 
+                    $ded = array(
+                        'no_dokumen'  => $this->input->post('no_dokumen'),
+                        'tgl_disahkan'=> date('Y-m-d')
+                    );
+                    $ruin = $this->m_dokumen->insert($ded, 'approve_dokumen');
+
+                    if ($run = 1 and $ruin = 1){
                                 echo $this->session->set_flashdata('pesan', 
                                 '<script>
                                 swal("Success !", "Upload Dokumen Berhasil", "success"); 
@@ -257,6 +299,7 @@ class C_dokumen extends CI_Controller {
         $cek = $this->m_dokumen->get_pemeriksa("(dokumen_akses.hak_akses = '$hak_akses' AND aksi = 'pemeriksa')")->num_rows();
         if ($cek > 0){
             $data['data'] = $this->m_dokumen->jenis_dokumen("(hak_akses = '$hak_akses' AND aksi = 'pemeriksa')")->result();
+            $data['hak_akses'] = $hak_akses; 
             $this->templates->utama('dokumen/v_periksa_dokumen', $data);
         }else{
             $data = array (
@@ -268,6 +311,57 @@ class C_dokumen extends CI_Controller {
         }
     }
 
+    public function sahkan_dokumen(){
+        $hak_akses = $this->session->userdata('hak_akses');
+        $cek = $this->m_dokumen->get_pemeriksa("(dokumen_akses.hak_akses = '$hak_akses' AND aksi = 'pengesah')")->num_rows();
+        if ($cek > 0){
+            $data['data'] = $this->m_dokumen->jenis_dokumen("(hak_akses = '$hak_akses' AND aksi = 'pengesah')")->result();
+            $data['hak_akses'] = $hak_akses; 
+            $this->templates->utama('dokumen/v_sahkan_dokumen', $data);
+        }else{
+            $data = array (
+                'title'   => 'Akses Tidak Ditemukan',
+                'content' => 'Anda belum dapat mengesahkan dokumen',
+                'url'     => base_url('c_dokumen'),
+            );
+            $this->templates->utama('pelanggan/v_error',$data);  
+        }
+    }
+
+    public function action_sahkan($no_dokumen){
+        $row = $this->m_dokumen->get_by_id('admin', 'id_auth', $this->session->userdata('id_auth'));
+        $row2 = $this->m_dokumen->get_by_id('approve_dokumen', 'no_dokumen', $no_dokumen);
+        
+        $data = array(
+            'status'    => 2
+        );
+        $data2 = array(
+            'id_pengesah'   => $row->id_admin,
+            'tgl_disahkan'  => date('Y-m-d')
+        );
+        $update = $this->m_dokumen->update(array('no_dokumen'=> $no_dokumen), $data, 'upload_dokumen');
+        $update = $this->m_dokumen->update(array('id_approve'=> $row2->id_approve), $data2, 'approve_dokumen');
+
+            if ($update = 1){
+                echo $this->session->set_flashdata('pesan', 
+                    '<script>
+                        swal("Success !", "Dokumen berhasil disahkan", "success"); 
+                     </script>');
+            }else{
+                echo $this->session->set_flashdata('pesan', 
+                '<script>
+                swal({
+                title: "Failed",
+                text: "Dokumen gagal disahkan",
+                type: "warning",
+            });
+            </script>');
+            }
+             redirect('c_dokumen/detail_pengesahanDokumen/'.$no_dokumen);
+        }
+            
+
+
     public function list_periksa_dokumen($id_jenis_dokumen){
      
         $hak_akses = $this->session->userdata('hak_akses');
@@ -278,16 +372,40 @@ class C_dokumen extends CI_Controller {
         //jika memiliki bidang maka kueri kan per bidangnya
 
         if ($bidang != null){
-            $data['data'] = $this->m_dokumen->all_dataDokumen("(id_jenis_dokumen = '$id_jenis_dokumen' AND bidang = '$bidang')", "(jabatan_pemeriksa = '$hak_akses' AND status = '0')")->result();
+            $data['data'] = $this->m_dokumen->all_dataDokumen("(id_jenis_dokumen = '$id_jenis_dokumen' AND bidang = '$bidang')", "(jabatan_pemeriksa = '$hak_akses')")->result();
+            $data['periksa_ulang'] = $this->m_dokumen->all_dataDokumen("(id_jenis_dokumen = '$id_jenis_dokumen' AND bidang = '$bidang')", "(jabatan_pemeriksa = '$hak_akses' AND status = '4')")->result();
+            $data['id_jenis_dokumen'] = $id_jenis_dokumen;
             $this->templates->utama('dokumen/v_list_periksa_dokumen', $data);     
         }else{
-            echo "usr tidak memiliki id bidang";
+            $data['data'] = $this->m_dokumen->all_dataDokumen("(id_jenis_dokumen = '$id_jenis_dokumen')", "(jabatan_pemeriksa = '$hak_akses')")->result();
+            $data['periksa_ulang'] = $this->m_dokumen->all_dataDokumen("(id_jenis_dokumen = '$id_jenis_dokumen')", "(jabatan_pemeriksa = '$hak_akses' AND status = '4')")->result();
+            $data['id_jenis_dokumen'] = $id_jenis_dokumen;
+            $this->templates->utama('dokumen/v_list_periksa_dokumen', $data);   
         }
     }
 
-    public function detail_dokumen($no_dokumen){
+    public function list_sahkan_dokumen($id_jenis_dokumen){
+        $hak_akses = $this->session->userdata('hak_akses');
+        $data['data'] = $this->m_dokumen->all_dataDokumen(array('id_jenis_dokumen'=> $id_jenis_dokumen), "(jabatan_pengesah ='$hak_akses' AND status != '0')")->result();
+        $data['id_jenis_dokumen'] = $id_jenis_dokumen;
+        $this->templates->utama('dokumen/v_list_sahkan_dokumen', $data);   
+    }
+
+    public function detail_dokumen($no_dokumen, $param){
+        if ($param == 'dokumen'){
+            $data ['param'] = $param;
+            $data['data'] = $this->db->query("SELECT * FROM upload_dokumen JOIN approve_dokumen ON upload_dokumen.no_dokumen = approve_dokumen.no_dokumen WHERE upload_dokumen.no_dokumen = '$no_dokumen'")->result();
+            $this->templates->utama('dokumen/v_detail_dokumen', $data);
+        }else{
+            $data['param'] = $param;
+            $data['data'] = $this->db->query("SELECT * FROM upload_dokumen JOIN approve_dokumen ON upload_dokumen.no_dokumen = approve_dokumen.no_dokumen WHERE upload_dokumen.no_dokumen = '$no_dokumen'")->result();
+            $this->templates->utama('dokumen/v_detail_dokumen', $data);
+        }
+    }
+
+    public function detail_pengesahanDokumen($no_dokumen){
         $data['data'] = $this->db->query("SELECT * FROM upload_dokumen JOIN approve_dokumen ON upload_dokumen.no_dokumen = approve_dokumen.no_dokumen WHERE upload_dokumen.no_dokumen = '$no_dokumen'")->result();
-        $this->templates->utama('dokumen/v_detail_dokumen', $data);
+        $this->templates->utama('dokumen/v_detail_pengesahanDokumen', $data);
     }
 
     public function form_tolak_dokumen(){
@@ -298,10 +416,13 @@ class C_dokumen extends CI_Controller {
 
 
     public function action_tolak(){
+        $row = $this->m_dokumen->get_by_id('admin', 'id_auth', $this->session->userdata('id_auth'));
         $no_dokumen = $this->input->post('no_dokumen');
+        $row2 = $this->m_dokumen->get_by_id('approve_dokumen','no_dokumen', $no_dokumen);
 
 		$config['upload_path']          = './dokumen/';
-		$config['allowed_types']        = 'docx|dox|rtf';
+        $config['allowed_types']        = 'docx|rtf';
+        $config['remove_space']        =   true;
 	
 		$ambil_data = $this->db->query("SELECT * FROM upload_dokumen WHERE no_dokumen = '$no_dokumen'");
 			
@@ -321,7 +442,13 @@ class C_dokumen extends CI_Controller {
                     'dok'       => $nama_dokumen,
                     'status'    => 3
                 ); 
+                $data2 = array(
+                    'id_pemeriksa'      => $row->id_admin,
+                    'tgl_diperiksa'     => date('Y-m-d')
+                );
+
                 $update = $this->m_dokumen->update(array('no_dokumen'=> $no_dokumen), $data, 'upload_dokumen');
+                $update = $this->m_dokumen->update(array('id_approve'=> $row2->id_approve), $data2, 'approve_dokumen');
                     if ($update = 1){
                         $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -341,7 +468,7 @@ class C_dokumen extends CI_Controller {
 						});
 						</script>');
 						}
-			redirect('c_dokumen/detail_dokumen/'.$no_dokumen);
+			redirect('c_dokumen/detail_dokumen/'.$no_dokumen.'/dokumen');
     }
     
 
@@ -359,21 +486,38 @@ class C_dokumen extends CI_Controller {
         }
         $renderLibraryPath=''.$renderLibrary;
         $objWriter= \PhpOffice\PhpWord\IOFactory::createWriter($contents,'PDF');
-        $objWriter->save("dokumen/".$nomor_dok.'.pdf', 'PDF');
+        $objWriter->save("dokumen/".$nomor_dok.'.pdf');
     }
 
 
     public function action_setuju($id_jenis_dokumen, $no_dokumen){
-
+        $row = $this->m_dokumen->get_by_id('approve_dokumen', 'no_dokumen', $no_dokumen);
+        $row2 = $this->m_dokumen->get_by_id('admin', 'id_auth', $this->session->userdata('id_auth'));
         // periksa terlebih dahulu apakah dokumen ini disahkan atau tidak 
         $cek = $this->db->query("SELECT * FROM dokumen_akses WHERE id_jenis_dokumen = '$id_jenis_dokumen' AND aksi = 'pengesah'")->num_rows();
-        
+        $ambil_data = $this->db->query("SELECT * FROM upload_dokumen WHERE no_dokumen = '$no_dokumen'");
+        $pros = $ambil_data->row();
+
         if ($cek > 0){
-               
+                $this->convert($pros->dok,$pros->no_dokumen);
+
+                if($ambil_data->num_rows() > 0){
+                    $dokumen=$pros->dok;
+                        if(is_file($lok=FCPATH.'/dokumen/'.$dokumen)){
+                            unlink($lok);
+                        }
+                    }
+
+                $data = array(
+                    'status' => 1,
+                    'dok'    => $pros->no_dokumen.'.pdf'
+                );
+                $data_2 = array(
+                    'id_pemeriksa'   => $row2->id_admin,
+                    'tgl_diperiksa' => date('Y-m-d'),
+                    'jabatan_pengesah'  => 2
+                );
                 }else{
-                    $ambil_data = $this->db->query("SELECT * FROM upload_dokumen WHERE no_dokumen = '$no_dokumen'");
-                    $pros = $ambil_data->row();
-    
                     $this->convert($pros->dok,$pros->no_dokumen);
                     
                     if($ambil_data->num_rows() > 0){
@@ -382,24 +526,84 @@ class C_dokumen extends CI_Controller {
                                 unlink($lok);
                             }
                         }
-
                     $data = array(
-                        'status' => 1,
-                        'dok'    => $pros->no_dokumen
+                        'status' => 2,
+                        'dok'    => $pros->no_dokumen.'.pdf'
+                    );  
+                    $data_2 = array(
+                        'id_pemeriksa'  => $row2->id_admin,
+                        'tgl_diperiksa' => date('Y-m-d'),
+                        'tgl_disahkan'  => date("Y-m-d")
                     );
-                    $run = $this->m_dokumen->update(array('no_dokumen'=> $no_dokumen), $data, 'upload_dokumen');
-                        if ($run = 1){
-                            $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong><center> Dokumen Sukses </center></strong></div>');
-                        }else{
-                            $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong><center> Dokumen Gagal </center></strong></div>');
-                        }
                 }
-                redirect('c_dokumen/detail_dokumen/'.$no_dokumen);  
+                $run = $this->m_dokumen->update(array('no_dokumen'=> $no_dokumen), $data, 'upload_dokumen');
+                $run = $this->m_dokumen->update(array('id_approve'=> $row->id_approve), $data_2, 'approve_dokumen');
+                if ($run = 1){
+                    $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong><center> Dokumen Sukses </center></strong></div>');
+                }else{
+                    $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong><center> Dokumen Gagal </center></strong></div>');
+                }
+                redirect('c_dokumen/detail_dokumen/'.$no_dokumen.'/dokumen');  
+    }
 
+    public function ajukan_ulang($no_dokumen){
+
+		$config['upload_path']          = './dokumen/';
+        $config['allowed_types']        = 'docx|doc|rtf';
+        $config['remove_space']         = true;
+	
+		$ambil_data = $this->db->query("SELECT * FROM upload_dokumen WHERE no_dokumen = '$no_dokumen'");
+			
+		if($ambil_data->num_rows() > 0){
+			$pros=$ambil_data->row();
+			$dokumen=$pros->dok;
+			    if(is_file($lok=FCPATH.'/dokumen/'.$dokumen)){
+					unlink($lok);
+				}
+			}
+		$this->load->library('upload', $config);
+			if($this->upload->do_upload('file')){
+				$finfo = $this->upload->data();
+				$nama_dokumen = $finfo['file_name'];
+
+                $data = array(
+                    'dok'       => $nama_dokumen,
+                    'status'    => 4
+                ); 
+               
+                $update = $this->m_dokumen->update(array('no_dokumen'=> $no_dokumen), $data, 'upload_dokumen');
+                    if ($update = 1){
+                        $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong><center> Perbaikan dokumen berhasil dikirim </center></strong></div>');
+                    }else{
+                        $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong><center> Perbaikan dokumen gagal dibuat </center></strong></div>');
+                    }
+            }else{
+				echo $this->session->set_flashdata('pesan', 
+					'<script>
+						swal({
+						title: "Failed",
+						text: "Format file tidak didukung",
+						type: "warning",
+						});
+						</script>');
+                        }
+            redirect('c_dokumen/detail_penolakan/'.$no_dokumen);
+    }
+
+    public function list_all_dokumen($id_dokumen_induk){
+
+        $data['data'] = $this->m_dokumen->upload_approve(array('id_dokumen_induk'=>$id_dokumen_induk))->result();
+        $data['dokumen_induk'] = $id_dokumen_induk;
+        $this->templates->utama('dokumen/v_list_all_dokumen', $data);
+    
     }
    
 
@@ -446,21 +650,7 @@ class C_dokumen extends CI_Controller {
 
 
 // function dokumen lama ke bawah 
-    public function dokumen_mutu(){
-        $hak_akses = $this->session->userdata('hak_akses');
-        $table = 'dokumen_mutu';
-        $data['dokumen'] = $this->m_dokumen->all_dokumen($table)->result_array();
-        if ($hak_akses == "admin_sampel"){
-        $this->templates->utama('dokumen/v_dokumen_mutu', $data);
-        }
-        else if ($hak_akses == "ka_laboratorium" or $hak_akses == "manajer_mutu" or $hak_akses == "manajer_operasional"
-        or $hak_akses == "manajer_puncak"){
-            $this->templates->all_manager('dokumen/v_dokumen_mutu', $data);
-        }
-        else if ($hak_akses == "manajer_teknik_mikro" or $hak_akses == "manajer_teknik_kimia" or $hak_akses = "manajer_teknik_farma"){
-            $this->templates->manager_teknik('dokumen/v_dokumen_mutu');
-        }
-    }
+
 
     public function dokumen_prosedur(){
         $hak_akses = $this->session->userdata('hak_akses');
@@ -1287,57 +1477,6 @@ class C_dokumen extends CI_Controller {
     }
     redirect('c_dokumen/dokumen_form');
 
-    }
-
-
-    public function belajar(){
-        $this->load->view('dokumen/form');
-    }
-
-    public function tangkap(){
-
-        if (isset($_SESSION['nama'])) {
-            $nama = $_SESSION['nama'];
-           }
-           if (isset($_SESSION['alamat'])) {
-            $alamat = $_SESSION['alamat'];
-           }
-
-           if (isset($_SESSION['hobi'])) {
-            $hobi = $_SESSION['hobi'];
-           }
-
-        $nama[] =$this->input->post('nama');
-        $alamat[] = $this->input->post('alamat');
-        $hobi[] = $this->input->post('hobi');
-
-      
-    
-
-        $_SESSION['nama'] = $nama;
-        $_SESSION['alamat'] = $alamat;
-        echo "<pre>";
-        print_r($_SESSION);
-        echo "</pre>";
-      
-
-        $this->load->view('dokumen/form');
-    }
-
-    public function destroy(){
-        unset(
-            $_SESSION['nama'],
-            $_SESSION['alamat'],
-            $_SESSION['hobi']
-        );
-        redirect('c_dokumen/belajar');
-    }
-
-    public function des($nama){
-        unset(
-            $_SESSION['nama']
-        );
-    redirect('c_dokumen/belajar');
     }
 
 

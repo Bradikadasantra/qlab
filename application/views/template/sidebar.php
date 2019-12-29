@@ -242,10 +242,29 @@
     <span>Dokumen</span></a>
 </li>
   <?php } ?>
+  
 <!--END MENU ALL MANAJER-->
 
+<!-- menu koor pengedali dokumen-->
+<?php
+  if($hak_akses == 9 OR $hak_akses == 10 OR $hak_akses == 11 OR $hak_akses == 13){
+?>
+<!-- Nav Item - Dashboard -->
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dashboard') ?>">
+    <i class="fas fa-fw fa-home"></i>
+    <span>Beranda</span></a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dokumen') ?>">
+    <i class="fas fa-fw fa-file-pdf"></i>
+    <span>Dokumen</span></a>
+</li>
+  <?php } ?>
 
 
+<!--end -->
 
 
 

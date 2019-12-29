@@ -49,6 +49,19 @@
                                                 echo $row->hak_akses; 
                                             ?>
                                             </td></tr>
+
+                                            <tr><td>Pemeriksa</td><td>
+                                            <?php 
+                                                $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_pemeriksa);
+                                                echo $row->nama; 
+                                            ?>
+                                            </td></tr>
+                                            <tr><td>Jabatan Pemeriksa</td><td>
+                                            <?php 
+                                                $row = $this->m_dokumen->get_by_id('hak_akses','id_hak_akses', $baris->jabatan_pemeriksa);
+                                                echo $row->hak_akses; 
+                                            ?>
+                                            </td></tr>
                                             <tr><td>Status Dokumen</td><td><?php  echo StatusDokumen($baris->status)?></td></tr>
                                             <tr><td>Tanggal Disusun</td><td><?php echo WKT($baris->tgl_buat)?></td></tr>
                                             <tr>
@@ -65,64 +78,17 @@
                                     </table>
                                 </div>
                             </div>
-                            <a href="<?php echo base_url('c_dokumen/list_periksa_dokumen/'.$baris->id_jenis_dokumen) ?>" class="btn btn-primary btn-sm mt-5"><i class="fas fa-angle-double-left"></i> Kembali</a>
-                            
-                            <?php if ($param == 'dokumen'){ ?>
-                                <?php if ($baris->status == 0) {?>
-                            <a href="#myModal" data-toggle="modal" data-id="<?php echo $baris->no_dokumen; ?>" class="btn btn-danger btn-sm mt-5"><i class="fas fa-times"></i> Tolak</a>
-                            <a href="<?php echo base_url('c_dokumen/action_setuju/'.$baris->id_jenis_dokumen.'/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5"><i class="fas fa-check"></i> Setuju</a>
-                            <?php } else{ ?>
-                                <a href="#myModal" data-toggle="modal" data-id="<?php echo $baris->no_dokumen; ?>" class="btn btn-danger btn-sm mt-5 disabled"><i class="fas fa-times"></i> Tolak</a>
-                                <a href="<?php echo base_url('c_dokumen/action_setuju/'.$baris->id_jenis_dokumen.'/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5 disabled"><i class="fas fa-check"></i> Setuju</a>
-                            <?php } ?>
-
-                            <?php }else { ?>
-                                <?php if ($baris->status == 4) {?>
-                            <a href="#myModal" data-toggle="modal" data-id="<?php echo $baris->no_dokumen; ?>" class="btn btn-danger btn-sm mt-5"><i class="fas fa-times"></i> Tolak</a>
-                            <a href="<?php echo base_url('c_dokumen/action_setuju/'.$baris->id_jenis_dokumen.'/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5"><i class="fas fa-check"></i> Setuju</a>
+                            <a href="<?php echo base_url('c_dokumen/list_sahkan_dokumen/'.$baris->id_jenis_dokumen) ?>" class="btn btn-primary btn-sm mt-5"><i class="fas fa-angle-double-left"></i> Kembali</a>
+                            <?php if ($baris->status == 1) { ?>
+                            <a href="<?php echo base_url('c_dokumen/action_sahkan/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5"><i class="fas fa-check fa-fw"></i> Sahkan</a>               
                             <?php } else { ?>
-
-                                <a href="#myModal" data-toggle="modal" data-id="<?php echo $baris->no_dokumen; ?>" class="btn btn-danger btn-sm mt-5 disabled"><i class="fas fa-times"></i> Tolak</a>
-                                <a href="<?php echo base_url('c_dokumen/action_setuju/'.$baris->id_jenis_dokumen.'/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5 disabled"><i class="fas fa-check"></i> Setuju</a>
-
-                            <?php } }  endforeach; ?>
+                                <a href="<?php echo base_url('c_dokumen/action_sahkan/'.$baris->no_dokumen) ?>" class="btn btn-success btn-sm mt-5 disabled"><i class="fas fa-check fa-fw"></i> Sahkan</a>
+                            <?php } endforeach; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-				  <h5 class="modal-title" id="exampleModalLabel">Lampirkan File</h5>
-				  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">x</span>
-				  </button>
-				</div>
-				<div class="modal-body"><div class="fetched-data"></div>
-			</div>
-		</div>
-	</div>  
 </div>
-
-<script>
-	//detail data admin
-	$(document).ready(function(){
-        $('#myModal').on('show.bs.modal', function (e) {
-			var rowid = $(e.relatedTarget).data('id');
-            //menggunakan fungsi ajax untuk pengambilan data
-            $.ajax({
-                type : 'post',
-				url : "<?php echo base_url('c_dokumen/form_tolak_dokumen')?>",
-				 data :  'rowid='+ rowid,
-				 
-                success : function(data){
-					    $('.fetched-data').html(data);//menampilkan data ke dalam modal
-                }
-            });
-         });
-    });
-</script>
 
