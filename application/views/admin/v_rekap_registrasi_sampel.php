@@ -14,7 +14,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row mt-4">
-                                    <div class="col-md">
+                                    <div class="col-md-10">
                                         <form action="" method="post">
                                             <div class="form-group row pl-3 pb-2">
                                                 <label for="bidang">PIlih Bidang</label>
@@ -30,16 +30,26 @@
                                         </form>
                                     </div>
                                 </div>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-outline-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-print fa-fw"></i> Print
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">Mikrobiologi</a>
-                                            <a class="dropdown-item" href="#">Kimia</a>
-                                            <a class="dropdown-item" href="#">Farmakologi</a>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-outline-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-print fa-fw"></i> Print
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <?php 
+                                                    $kueri = $this->db->query("SELECT * FROM bidang")->result();
+                                                    foreach ($kueri as $baris):                                                
+                                                ?>
+                                                  <a class="dropdown-item" href="<?php echo base_url('c_laporan/print_rekapRegistrasiSampel/'.$baris->id_bidang.'/'.$baris->nama_bidang) ?>"><?php echo $baris->nama_bidang; ?></a>
+                                                <?php endforeach;  ?>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-2">
+                                    <a href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel') ?>" class="btn btn-primary btn-sm"><i class="fas fa-redo fa-fw text-cen"></i> Refresh</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <div class="row mt-4">
@@ -102,8 +112,8 @@
                                             <?php 
                                                    if ($baris->status_sampel == 3){
                                                        echo "<p class='text-danger'>Ditolak</p>";
-                                                   }else if ($baris->status_sampel == 4){
-                                                    echo "<p class='text-dark'>Konfirmasi</p>";
+                                                   }else if ($baris->status_sampel == 6){
+                                                    echo "<p class='text-dark'>Cancel</p>";
                                                    }else{
                                                        echo "-";
                                                    }

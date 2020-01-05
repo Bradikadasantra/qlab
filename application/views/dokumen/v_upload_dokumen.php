@@ -43,7 +43,6 @@
                                             </select>
                                             <?php echo form_error('jenis_dokumen','<small class="text-danger">','</small>') ?>
                                         </div>
-                                      
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +72,7 @@
                                                 <label for="no_dokumen"> Nomor Dokumen</label>
                                             </div>
                                             <div class="col-md-5">
-                                               <input type="text" class="form-control" name="no_dokumen" id="no_dokumen" Placeholder="Masukkan nomor dokumen">
+                                               <input type="text" class="form-control" name="no_dokumen" id="no_dokumen"  value="<?php echo set_value('no_dokumen') ?>" Placeholder="Masukkan nomor dokumen">
                                                <?php echo form_error('no_dokumen','<small class="text-danger">','</small>') ?>
                                             </div>
                                         </div>  
@@ -83,8 +82,18 @@
                                                 <label for="nama_dokumen"> Nama Dokumen</label>
                                             </div>
                                             <div class="col-md-5">
-                                               <input type="text" class="form-control" name="nama_dokumen" id="nama_dokumen" Placeholder="Masukkan nama dokumen">
+                                               <input type="text" class="form-control" name="nama_dokumen" id="nama_dokumen" value="<?php echo set_value('nama_dokumen') ?>"  Placeholder="Masukkan nama dokumen">
                                                <?php echo form_error('nama_dokumen','<small class="text-danger">','</small>') ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group pt-2 row">
+                                            <div class="col-md-2">
+                                                <label for="lokasi"> Lokasi</label>
+                                            </div>
+                                            <div class="col-md-5">
+                                               <input type="text" class="form-control" name="lokasi" id="lokasi" value="<?php echo set_value('lokasi') ?>"  Placeholder="Masukkan lokasi dokumen">
+                                               <?php echo form_error('lokasi','<small class="text-danger">','</small>') ?>
                                             </div>
                                         </div>
 
@@ -163,7 +172,7 @@ $(document).ready(function(){
                         }); 
                         
 
-                        $(document).ready(function(){ 
+$(document).ready(function(){ 
     // Ketika halaman sudah siap (sudah selesai di load)
     // Kita sembunyikan dulu untuk loadingnya    
     $("#loading").hide();       

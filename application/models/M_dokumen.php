@@ -80,49 +80,10 @@ class M_dokumen extends CI_Model{
         return $this->db->get();
     }
 
-
-    //END
-
-
-
-
-
-
-
-
-   
-
-    public function all_dokumen($table){
+    public function DokumenRevisi($where){
         $this->db->select('*');
-        $this->db->from($table);
-        return $this->db->get();
-    }
-
-
-    public function dokumen(){
-        $this->db->select('*');
-        $this->db->from('dokumen');
-        return $this->db->get();
-    }
-
-   
-    public function revisi_dokumen($where, $table){
-        $this->db->select('*');
-        $this->db->from($table);
-        $this->db->where($where);
-        return $this->db->get();
-    }
-
-    public function detail_dokumen($where, $table){
-        $this->db->select('*');
-        $this->db->from($table);
-        $this->db->where($where);
-        return $this->db->get();
-    }
-
-    public function ambil_dokumen($where, $table){
-        $this->db->select('*');
-        $this->db->from($table);
+        $this->db->from('upload_dokumen');
+        $this->db->join('revisi','upload_dokumen.no_dokumen = revisi.no_dokumen');
         $this->db->where($where);
         return $this->db->get();
     }

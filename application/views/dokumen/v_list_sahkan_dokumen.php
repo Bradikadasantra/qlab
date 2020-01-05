@@ -24,7 +24,7 @@
                                             <th>Nama Dokumen</th>
                                             <th>No Dokumen</th>
                                             <th>Status</th>
-                                            <th>Dokumen</th>
+                                            <th>Tgl Diperiksa</th>
                                             <th>Detail</th>
                                         </tr>
                                     </thead>
@@ -37,7 +37,7 @@
                                                 <td><?php echo $baris->nama_dok; ?></td>
                                                 <td><?php echo $baris->no_dokumen;  ?></td>
                                                 <td><?php echo StatusDokumen($baris->status); ?></td>
-                                                <td><a href="<?php echo base_url('dokumen/'.$baris->dok) ?>"><?php echo $baris->dok; ?></a></td>
+                                                <td><?php echo WKT($baris->tgl_diperiksa) ?></td>
                                                 <td><a href="<?php echo base_url('c_dokumen/detail_pengesahanDokumen/'.$baris->no_dokumen)?>" class="btn btn-primary btn-sm"><i class="fas fa-eye fa-fw"></i> Detail</a></td>
                                             </tr>
                                         <?php endforeach; ?> 

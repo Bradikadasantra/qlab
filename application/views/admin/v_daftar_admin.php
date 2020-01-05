@@ -17,7 +17,7 @@
                             <h6 class="text-light">Daftar Admin</h6>
                         </div>
                         <div class="card-body">
-                            <table class="table table-hover table-sm" id="table">
+                            <table class="table table-sm" id="table">
                                 <thead style="text-align:center" class="thead-light">
                                     <th width="8%">No</th>
                                     <th width="25%">Nama</th>

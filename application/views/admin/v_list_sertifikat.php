@@ -15,22 +15,26 @@
                         <div class="col-md">
                             <table class="table table-sm mt-4" id="mytable">
                                 <thead class="thead-light  text-center">
-                                    <th>No sertifikat</th>
+                                    <th>No</th>
+                                    <th>Nomor Sertifikat</th>
                                     <th>Pemilik</th>
                                     <th>Instansi</th>
                                     <th>Sertifikat</th>
                                 </thead>
                                 <tbody class="text-center">
-                                    <?php foreach ($data as $baris): 
+                                    <?php
+                                    $no = 1; 
+                                    foreach ($data as $baris): 
                                     $row = $this->m_registrasi_sampel->get_by_id('pelanggan', 'id_pelanggan', $baris->id_pelanggan);
                                     $pemilik = $row->nama;  
                                     $instansi = $row->instansi;    
                                     ?>
                                         <tr>
-                                            <td><a href="#"><?php echo setNosampel($baris->no_sampel, $baris->tgl_order) ?></a></td>
+                                            <td><?php echo $no++; ?></td>
+                                            <td> Nomor : <?php echo setNosampel($baris->no_sampel, $baris->tgl_order) ?></td>
                                             <td><?php echo $pemilik;  ?></td>
                                             <td><?php echo  $instansi;  ?></td>
-                                            <td class="text-center"><a href="<?php echo base_url('c_pelanggan/print_hasilPemeriksaan/'.$baris->id_sampel) ?>"><i class="fas fa-info fa-sm"></i> Lihat</a></td>
+                                            <td class="text-center"><a href="<?php echo base_url('c_pelanggan/print_hasilPemeriksaan/'.$baris->id_sampel) ?>"><i class="fas fa-file-pdf fa-sm"></i> Lihat</a></td>
                                         </tr>
                                     <?php endforeach;  ?>
                                 </tbody>

@@ -47,7 +47,14 @@
                                         <label for="bank_pengirim"> Pembayaran dari Bank </label>
                                         </div>
                                         <div class="col-md-8">
-                                        <input type="text" class="form-control" name="bank_pengirim" id="bank_pengirim" value="<?php echo set_value('bank_pengirim') ?>" >
+                                        <select class="form-control" name="bank_pengirim" id="bank_pengirim">
+                                        <option value="" selected>~ Pilih Bank</option>
+                                            <?php 
+                                            $kueri = $this->db->query("SELECT * FROM bank")->result();
+                                            foreach ($kueri as $row): ?>
+                                                <option value="<?php echo $row->id_bank; ?>"><?php echo $row->bank; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                         <?php echo form_error('bank_pengirim','<small class="text-danger">','</small>') ?>
                                         </div>
                                     </div>
@@ -66,6 +73,7 @@
                                         </div>
                                         <div class="col-md-8">
                                         <input type="file" class="form-control" name="bukti_bayar" id="bukti_bayar">
+                                        <?php echo form_error('bukti_bayar','<small class="text-danger">','</small>') ?>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -84,7 +92,7 @@
                                     </div>
                                     <div class="row mt-5">
                                         <div class="col-md">
-                                            <a href="<?php echo base_url('c_dahsboard')?>" class="btn btn-danger btn-sm"><i class="fas fa-times fa-sm"></i>  Batal</a>
+                                            <a href="<?php echo base_url('c_dashboard')?>" class="btn btn-danger btn-sm"><i class="fas fa-times fa-sm"></i>  Batal</a>
                                             <button class="btn btn-primary btn-sm" type="submit" value="Konfirmasi"><i class="fas fa-check fa-sm"></i> Konfirmasi</button>
                                         </div>
                                     </div>

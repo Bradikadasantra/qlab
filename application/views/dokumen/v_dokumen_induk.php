@@ -3,8 +3,8 @@
         <div class="col-md-12">
             <div class="row">
             <?php 
-                $where 	= array('id_auth'=> $this->session->userdata('id_auth'));
-                $row    = $this->m_admin->cari_admin($where)->row();
+                $where 	= array('auth.id_auth'=> $this->session->userdata('id_auth'));
+                $row    = $this->m_admin-> cari_adminAuth($where)->row();
             ?>
                 <div class="col-md-2 mb-2">
                     <div class="card bg-light">
@@ -23,7 +23,13 @@
                         </div>
                         <a class="card-footer bg-light small text-center" href="<?php echo base_url('c_dokumen/periksa_dokumen') ?>">
                             <span class="text-center"> Periksa Dokumen</span>
-                            <?php echo notif_riwayat(array('id_pemeriksa'=> $row->id_admin), "(status = '0' OR status = '4')") ?>
+                            <?php 
+                                if ($row->id_bidang == null){
+                                    echo notif_riwayat(array('jabatan_pemeriksa'=> $row->hak_akses), "(status = '0' OR status = '4')");
+                                }else{
+                                    echo notif_riwayat("(jabatan_pemeriksa = '$row->hak_akses' AND bidang = '$row->id_bidang')", "(status = '0' OR status = '4')");
+                                }
+                            ?>
                         </a>
                     </div>
                 </div>
@@ -35,7 +41,13 @@
 
                         <a class="card-footer bg-light small text-center" href="<?php echo base_url('c_dokumen/sahkan_dokumen') ?>">
                             <span class="text-center"> Disahkan</span>
-                            <?php echo notif_riwayat(array('id_pengesah'=> $row->id_admin), array('status'=> 1)) ?>
+                            <?php 
+                                if ($row->id_bidang == null){
+                                    echo notif_riwayat(array('jabatan_pengesah'=> $row->hak_akses), "(status = '1')");
+                                }else{
+                                    echo notif_riwayat("(jabatan_pengesah = '$row->hak_akses' AND bidang = '$row->id_bidang')", "(status = '1')");
+                                }
+                            ?>
                         </a>
                     </div>
                 </div>

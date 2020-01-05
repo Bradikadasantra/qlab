@@ -39,6 +39,12 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>Nama Dokumen</td><td>: <?php echo $baris->nama_dok; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Lokasi</td><td>: <?php echo $baris->lokasi; ?></td>
+                                </tr>
+                                <tr>
                                     <td>Penyusun</td><td> :
                                     <?php 
                                         if ($baris->id_penyusun == null){
@@ -77,7 +83,7 @@
                                 </tr>
                                 <?php if ($baris->status == 3){ ?>
                                 <tr>
-                                    <td>Dokumen</td><td><a href="<?php echo base_url('dokumen/'.$baris->dok) ?>"><i class="fas fa-file fa-sm fa-fw"></i> LIhat Perbaikan</a></td>
+                                    <td>Dokumen</td><td><a href="<?php echo base_url('dokumen/'.$baris->dok) ?>"><i class="fas fa-file-word fa-sm fa-fw"></i> LIhat Perbaikan</a></td>
                                 </tr>
                                 <?php } ?>
                                 <tr><td></td></tr>

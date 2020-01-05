@@ -54,9 +54,14 @@
                                             <tr>
                                                 <td>Dokumen</td>
                                                 <td>
+                                                   <?php if ($param == 'dokumen') { ?>
                                                     <?php if ($baris->status != 0) { ?>
                                                         <a href="<?php echo base_url('ViewerJS/#../dokumen/'.$baris->dok)?>"><img src="<?php echo base_url('assets/img/pdf.png')?>" style="width:20px; height:20px"> Dokumen</a>
                                                     <?php } else{ ?>
+                                                        <a href="<?php echo base_url('dokumen/'.$baris->dok) ?>"><i class="fas fa-file-word fa-fw"></i> Dokumen</a>
+                                                    <?php } ?>
+
+                                                    <?php } else { ?>
                                                         <a href="<?php echo base_url('dokumen/'.$baris->dok) ?>"><i class="fas fa-file-word fa-fw"></i> Dokumen</a>
                                                     <?php } ?>
                                                 </td>

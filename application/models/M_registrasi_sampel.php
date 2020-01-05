@@ -89,7 +89,8 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->select('*');
         $this->db->from('order');
         $this->db->join('pelanggan', 'order.id_pelanggan = pelanggan.id_pelanggan');
-        $this->db->where('no_order', $no_order);
+        $this->db->join('tagihan', 'tagihan.no_order = order.no_order');
+        $this->db->where('order.no_order', $no_order);
         return $this->db->get();
     }
 
@@ -134,6 +135,7 @@ class M_registrasi_sampel extends CI_Model{
         $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
         $this->db->where($where);
         $this->db->where($where2);
+        $this->db->order_by('tgl_order', 'asc');
         return $this->db->get();
     }
 
@@ -192,6 +194,19 @@ class M_registrasi_sampel extends CI_Model{
         return $this->db->get();
     }
 
+    public function laporan_rekap_regist($where, $where2){
+        $this->db->select('*');
+        $this->db->from('order');
+        $this->db->join('tagihan','tagihan.no_order = order.no_order');
+        $this->db->join('order_detail','order_detail.no_order = order.no_order');
+        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
+        $this->db->join('pemeriksaan','pemeriksaan.id_sampel = sampel.id_sampel');
+        $this->db->join('pengujian','pengujian.id_pengujian = pemeriksaan.id_pengujian');
+        $this->db->where($where);
+        $this->db->where($where2);
+        return $this->db->get();
+    }
+
     public function all_sampel($where){
         $this->db->select('*');
         $this->db->from('sampel');
@@ -236,112 +251,6 @@ class M_registrasi_sampel extends CI_Model{
         return $this->db->get();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    //hapus dari sini 
-
-    public function sampel_pemeriksaan_pengujian($where){
-        $this->db->select('*');
-        $this->db->from('sampel');
-        $this->db->join('pemeriksaan','sampel.id_sampel = pemeriksaan.id_sampel');
-        $this->db->join('pengujian','pengujian.id_pengujian = pemeriksaan.id_pengujian');
-        $this->db->where('status_pemeriksaan',2);
-        $this->db->where($where);
-        return $this->db->get();
-    }
-
-    public function pemeriksaan_hasil($where){
-        $this->db->select('*');
-        $this->db->from('sampel');
-        $this->db->join('hasil_pemeriksaan', 'hasil_pemeriksaan.id_pemeriksaan = pemeriksaan.id_pemeriksaan');
-        $this->db->where($where);
-        return $this->db->get();
-    }
-
-    public function pemeriksaan_hasilPemeriksaan($where){
-        $this->db->select('*');
-        $this->db->from('pemeriksaan');
-        $this->db->join('hasil_pemeriksaan','pemeriksaan.id_pemeriksaan = hasil_pemeriksaan.id_pemeriksaan');
-        $this->db->where($where);
-        return $this->db->get();
-    }
-
-    public function sampel_pemeriksaan($where){
-        $this->db->select('*');
-        $this->db->from('sampel');
-        $this->db->join('pemeriksaan', 'pemeriksaan.id_sampel = sampel.id_sampel');
-        $this->db->where($where);
-       return $this->db->get();
-    }
-
-
-    public function list_ApproveHasilPemeriksaan($id_bidang){
-        $this->db->select('sampel.id_sampel, order.id_pelanggan');
-        $this->db->distinct();
-        $this->db->from('order');
-        $this->db->join('order_detail','order_detail.no_order = order.no_order');
-        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
-        $this->db->join('pemeriksaan','pemeriksaan.id_sampel = sampel.id_sampel');
-        $this->db->where('id_bidang', $id_bidang);
-        $this->db->where("(status_sertifikat = '1' OR status_sertifikat = '3')");
-        return $this->db->get();
-     }
-
-     public function sampel_siap_approve($where){
-         $this->db->select('*');
-         $this->db->from('order');
-         $this->db->join('pelanggan','order.id_pelanggan = pelanggan.id_pelanggan');
-         $this->db->join('order_detail','order_detail.no_order = order.no_order');
-         $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
-         $this->db->where($where);
-         return $this->db->get();
-     }
-
-     public function sorting_SampelPemeriksaan($where){
-         $this->db->select('sampel.id_sampel');
-         $this->db->distinct();
-         $this->db->from('sampel');
-         $this->db->join('pemeriksaan','pemeriksaan.id_sampel = sampel.id_sampel');
-         $this->db->where($where);
-         return $this->db->get();
-     }
-
-  
-
-     public function status_tinjauan($id_bidang, $status, $tinjauan, $id_sampel){
-        $this->db->select('order.no_order');
-        $this->db->distinct();
-        $this->db->from('order');
-        $this->db->join('order_detail','order.no_order = order_detail.no_order');
-        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
-        $this->db->where($id_bidang);
-        $this->db->where($status);
-        $this->db->where($tinjauan);
-        $this->db->where($id_sampel);
-        return $this->db->get();
-    }
-
-
-    public function status_sertifikat($no_order, $id_bidang){
-        $this->db->select('status_sertifikat');
-        $this->db->distinct();
-        $this->db->from('order');
-        $this->db->join('order_detail','order.no_order = order_detail.no_order');
-        $this->db->join('sampel','sampel.id_order_detail = order_detail.id_order_detail');
-        $this->db->where($no_order);
-        $this->db->where($id_bidang);
-        return $this->db->get();
-    }
 }
 
 

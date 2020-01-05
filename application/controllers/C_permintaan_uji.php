@@ -1,9 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_permintaan_uji extends CI_Controller {
+class C_permintaan_uji extends MY_Controller {
 
     public function __construct(){
-		parent:: __construct();
+        parent:: __construct();
+        $this->cekLogin();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_registrasi_sampel');
@@ -1043,15 +1044,9 @@ class C_permintaan_uji extends CI_Controller {
 
 
     public function list_sertifikat(){
-
       $data['data'] = $this->m_registrasi_sampel->view_sertifikat(array('status_tagihan'=>2), array('status_sampel !=' => 3))->result();
       $this->templates->utama('admin/v_list_sertifikat', $data);
     }
-
-
-
-
-
 
 
   }

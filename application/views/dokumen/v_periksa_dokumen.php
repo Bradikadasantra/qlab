@@ -9,6 +9,10 @@
                         $_SESSION['pesan'] = '';
                 ?>
             <div class="card">
+            <?php 
+                $where 	= array('auth.id_auth'=> $this->session->userdata('id_auth'));
+                $row    = $this->m_admin-> cari_adminAuth($where)->row();
+            ?>
                 <div class="card-body">
                     <small><i class="fas fa-file-pdf fa-fw fa-sm"></i>  Dokumen <span class="fas fa-chevron-right fa-fw mx-1"></span> Periksa Dokumen</small>
                     <h5 class="text-dark mt-5"> Periksa Dokumen</h5>
@@ -18,7 +22,14 @@
                                 <div class="alert alert-primary" role="alert">
                                     
                                     <a href="<?php echo base_url('c_dokumen/list_periksa_dokumen/'.$baris->id_jenis_dokumen) ?>"><?php echo $baris->nama_dokumen; ?></a>
-                                    <span class=" badge badge-danger mx-2"><?php echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pemeriksa = '$hak_akses')", "(status = '0' OR status = '4')") ?></span>
+                                    <?php
+                                      if ($row->id_bidang == null){
+                                        echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pemeriksa = '$hak_akses')", "(status = '0' OR status = '4')");
+                                    }else{
+                                        echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pemeriksa = '$hak_akses' AND bidang = '$row->id_bidang')", "(status = '0' OR status = '4')");
+                                    }
+                                    ?>        
+                                    
                                 </div>
                             <?php endforeach; ?>
                         </div>

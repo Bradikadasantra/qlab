@@ -45,7 +45,6 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Data Sampel:</h6>
             <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/approval_sa')?>">Permintaan Uji Sampel</a>
-            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel')?>">Rekap Registrasi Sampel</a>
             </div>
         </div>
       </li>
@@ -94,7 +93,7 @@
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url('c_dokumen')?>">
           <i class="fas fa-fw fa-file-pdf"></i>
-          <span>Dokumen Induk</span></a>
+          <span>Dokumen</span></a>
       </li>
 
       <li class="nav-item">
@@ -106,7 +105,7 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manajemen User</h6>
             <a class="collapse-item" href="<?php echo base_url('c_laporan/keuangan') ?>">Keuangan</a>
-            <a class="collapse-item" href="#">Sampel</a>
+            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel')?>">Rekap Registrasi Sampel</a>
           </div>
         </div>
       </li>

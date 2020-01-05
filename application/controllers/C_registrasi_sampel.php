@@ -1,9 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_registrasi_sampel extends CI_Controller {
+class C_registrasi_sampel extends MY_Controller {
 
     public function __construct(){
-		parent:: __construct();
+        parent:: __construct();
+        $this->cekLogin();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_registrasi_sampel');
@@ -23,23 +24,8 @@ class C_registrasi_sampel extends CI_Controller {
         $this->templates->utama('pelanggan/v_registrasi_sampel_2', $data);
     }
 
-
-//mulai dari sini functon untuk registrasi sampel 
-  public function registrasi (){
-    $K ='K'; $M = 'M'; $F = 'F';
-    $data['kimia'] = $this->m_registrasi_sampel->pengujian($K)->result_array();
-    $data['mikrobiologi'] = $this->m_registrasi_sampel->pengujian($M)->result_array();
-    $data['farmakologi'] = $this->m_registrasi_sampel->pengujian($F)->result_array();
-    $data['no_order'] = getNota("`order`", "no_order", "OR-");
-    $id_auth = $this->session->userdata('id_auth');
-
-    $data['pelanggan'] = $this->m_pelanggan->ambil_info_pelanggan($id_auth)->result_array();
-    $this->templates->utama('pelanggan/v_registrasi_sampel_2', $data);
-  }
-
-
   public function tambah_pemerian(){
-    $pemerian =$this->input->post('pemerian');
+    $pemerian = ucwords($this->input->post('pemerian'));
 
     $cek = $this->db->query("SELECT * FROM pemerian WHERE pemerian = '$pemerian'")->num_rows();
     if ($cek > 0 ){
@@ -47,7 +33,7 @@ class C_registrasi_sampel extends CI_Controller {
       '<script>
          swal({
          title: "Failed",
-         text: "nama ini sudah ada",
+         text: "Nama ini sudah ada",
         type: "warning",
      });
      </script>');
@@ -70,7 +56,7 @@ class C_registrasi_sampel extends CI_Controller {
   }
 
   public function tambah_kemasan(){
-    $kemasan =$this->input->post('kemasan');
+    $kemasan = ucwords($this->input->post('kemasan'));
 
     $cek = $this->db->query("SELECT * FROM kemasan WHERE kemasan = '$kemasan'")->num_rows();
 
@@ -79,7 +65,7 @@ class C_registrasi_sampel extends CI_Controller {
       '<script>
          swal({
          title: "Failed",
-         text: "nama ini sudah ada",
+         text: "Nama ini sudah ada",
         type: "warning",
      });
      </script>');
@@ -103,7 +89,7 @@ class C_registrasi_sampel extends CI_Controller {
   }
 
   public function tambah_transportasi(){
-    $trans =$this->input->post('transportasi_sampel');
+    $trans = ucwords($this->input->post('transportasi_sampel'));
 
     $cek = $this->db->query("SELECT * FROM transportasi_sampel WHERE transportasi_sampel = '$trans'")->num_rows();
     if ($cek > 0){
@@ -111,7 +97,7 @@ class C_registrasi_sampel extends CI_Controller {
       '<script>
          swal({
          title: "Failed",
-         text: "nama ini sudah ada",
+         text: "Nama ini sudah ada",
         type: "warning",
      });
      </script>'); 
@@ -179,14 +165,13 @@ class C_registrasi_sampel extends CI_Controller {
     else{
     $data_order_detail = array (
       'id_pelanggan'        => $id_pelanggan, 
-      'nama_sampel'         => $this->input->post('nama_sampel'),
-      'pemerian'            => $this->input->post('pemerian'),
+      'nama_sampel'         => ucwords($this->input->post('nama_sampel')),
+      'pemerian'            => ucwords($this->input->post('pemerian')),
       'kode_batch'          => $this->input->post('kode_batch'),
-      'jumlah'              => $this->input->post('jumlah'),
       'kemasan'             => $this->input->post('kemasan'),
       'transportasi_sampel' => $this->input->post('transportasi_sampel'),
       'tempat_penyimpanan'  => $this->input->post('tempat_penyimpanan'),
-      'hal_lain'            => $this->input->post('hal_lain')
+      'hal_lain'            => ucfirst($this->input->post('hal_lain'))
     );
 
     $this->m_registrasi_sampel->insert($data_order_detail, 'tmp_order_detail');

@@ -38,6 +38,12 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>Nama Dokumen</td><td>: <?php echo $baris->nama_dok; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Lokasi</td><td>: <?php echo $baris->lokasi; ?></td>
+                                </tr>
+                                <tr>
                                     <td>Penyusun</td><td> :
                                     <?php 
                                         if ($baris->id_penyusun == null){
@@ -73,7 +79,7 @@
                                 </tr>
                                 <tr>
                                     <td>Tgl Diperiksa</td>
-                                    <td>: <?php if ($baris->tgl_diperiksa == null){ echo "-"; }else{ echo $baris->tgl_diperiksa; } ?></td>
+                                    <td>: <?php if ($baris->tgl_diperiksa == null){ echo "-"; }else{ echo WKT($baris->tgl_diperiksa); } ?></td>
                                 </tr>
                                 <tr>
                                     <td>Dokumen</td>

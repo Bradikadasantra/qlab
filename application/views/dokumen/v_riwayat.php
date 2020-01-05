@@ -32,7 +32,7 @@
                                                 <th>Nama dokumen</th>
                                                 <th>Jenis Dokumen</th>
                                                 <th>Status</th>
-                                                <th>Tgl Buat</th>
+                                                <th>Tgl Disusun</th>
                                                 <th>Detail</th>
                                             </tr>
                                         </thead>

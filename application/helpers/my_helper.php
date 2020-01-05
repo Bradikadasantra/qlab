@@ -412,10 +412,9 @@ function notif_JenisDokumen($param, $param2){
 	$ci 	= get_instance();
 	$cek = 	$ci->m_dokumen->all_dataDokumen($param,$param2)->num_rows();
 	if ($cek > 0){
-			return $cek;
+			echo "<span class='badge badge-danger'>$cek</span>";
 		}else{	}
-}
-
+}	
 
 function aktif($s){
 	switch ($s){
@@ -423,6 +422,8 @@ function aktif($s){
 		case 1 :return 'Aktif';break;
 	}
 }
+
+
 
 
 

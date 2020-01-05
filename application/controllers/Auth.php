@@ -107,7 +107,7 @@ class Auth extends CI_Controller {
 		
 		$pelanggan = array(
 			'id_auth' 	=> $id_auth,
-			'nama'	  	=> htmlspecialchars($this->input->post('name', true)),
+			'nama'	  	=> ucwords(htmlspecialchars($this->input->post('name', true))),
 			'no_telp'	=> " ",
 			'alamat'	=> " ",
 			'alamat'	=> " ",

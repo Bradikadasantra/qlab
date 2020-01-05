@@ -11,8 +11,8 @@
             <div class="card">
                 <div class="card-body">
                 <small><i class="fas fa-clipboard fa-fw"></i> Laporan Keuangan</small><br>
-                    <div class="row mt-4">
-                        <div class="col-md-12 mb-4">
+                    <div class="row mt-4 mb-2">
+                        <div class="col-md-11">
                             <p> Pilih tanggal</p>    
                             <form action="" method="post" class="form-inline">
                                  <div class="form-group mb-2">
@@ -25,6 +25,11 @@
                                 </div>
                                 <input type="submit" class="btn btn-outline-secondary btn-sm mb-2 mx-3" name="submit" value="Submit">
                             </form>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md">
+                            <a href="<?php echo base_url('c_laporan/keuangan') ?>" class="btn btn-primary btn-sm"><i class="fas fa-redo fa-fw text-cen"></i> Refresh</a>
                         </div>
                     </div>
                     <div class="row mt-2">

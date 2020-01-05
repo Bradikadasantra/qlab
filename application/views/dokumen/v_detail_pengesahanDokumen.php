@@ -19,54 +19,56 @@
                                     <table class="table table-borderless table-sm">
                                         <tbody>
                                         <?php foreach ($data as $baris): ?>
-                                            <tr><td>Dokumen Induk</td><td>
+                                            <tr><td>Dokumen Induk</td><td>:
                                             <?php 
                                                 $row = $this->m_dokumen->get_by_id('dokumen_induk', 'id_dokumen_induk', $baris->id_dokumen_induk);
                                                 echo $row->dokumen; 
                                             ?>
                                             </td></tr>
-                                            <tr><td>Jenis Dokumen</td><td>
+                                            <tr><td>Jenis Dokumen</td><td>:
                                             <?php
                                             $row = $this->m_dokumen->get_by_id('jenis_dokumen', 'id_jenis_dokumen', $baris->id_jenis_dokumen);
                                                 echo $row->nama_dokumen; 
                                             ?>
-                                            </td></tr>
-                                            <tr><td>Nama Dokumen</td><td>
-                                            <?php echo $baris->nama_dok; ?>
-                                            </td></tr>
-                                            <tr><td>Nomor Dokumen</td><td>
+                                            <tr><td>Nomor Dokumen</td><td>:
                                             <?php echo $baris->no_dokumen; ?>
                                             </td></tr>
-                                            <tr><td>Peyusun</td><td>
+                                            <tr>
+                                                <td>Nama Dokumen</td><td>: <?php echo $baris->nama_dok; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Lokasi</td><td>: <?php echo $baris->lokasi; ?></td>
+                                            </tr>
+                                            <tr><td>Peyusun</td><td>:
                                             <?php 
                                                 $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_penyusun);
                                                 echo $row->nama; 
                                             ?>
                                             </td></tr>
-                                            <tr><td>Jabatan Penyusun</td><td>
+                                            <tr><td>Jabatan Penyusun</td><td>:
                                             <?php 
                                                 $row = $this->m_dokumen->get_by_id('hak_akses','id_hak_akses', $baris->jabatan_penyusun);
                                                 echo $row->hak_akses; 
                                             ?>
                                             </td></tr>
 
-                                            <tr><td>Pemeriksa</td><td>
+                                            <tr><td>Pemeriksa</td><td>:
                                             <?php 
                                                 $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_pemeriksa);
                                                 echo $row->nama; 
                                             ?>
                                             </td></tr>
-                                            <tr><td>Jabatan Pemeriksa</td><td>
+                                            <tr><td>Jabatan Pemeriksa</td><td>:
                                             <?php 
                                                 $row = $this->m_dokumen->get_by_id('hak_akses','id_hak_akses', $baris->jabatan_pemeriksa);
                                                 echo $row->hak_akses; 
                                             ?>
                                             </td></tr>
-                                            <tr><td>Status Dokumen</td><td><?php  echo StatusDokumen($baris->status)?></td></tr>
-                                            <tr><td>Tanggal Disusun</td><td><?php echo WKT($baris->tgl_buat)?></td></tr>
+                                            <tr><td>Status Dokumen</td><td>: <?php  echo StatusDokumen($baris->status)?></td></tr>
+                                            <tr><td>Tanggal Disusun</td><td>: <?php echo WKT($baris->tgl_buat)?></td></tr>
                                             <tr>
                                                 <td>Dokumen</td>
-                                                <td>
+                                                <td>:
                                                     <?php if ($baris->status != 0) { ?>
                                                         <a href="<?php echo base_url('ViewerJS/#../dokumen/'.$baris->dok)?>"><img src="<?php echo base_url('assets/img/pdf.png')?>" style="width:20px; height:20px"> Dokumen</a>
                                                     <?php } else{ ?>

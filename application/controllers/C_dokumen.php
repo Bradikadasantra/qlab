@@ -1,10 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once dirname(__dir__).'../../PHPWORD/autoload.php';
 
-class C_dokumen extends CI_Controller {
+class C_dokumen extends MY_Controller {
 
     public function __construct(){
-		parent:: __construct();
+        parent:: __construct();
+        $this->cekLogin();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_dokumen');
@@ -131,15 +132,15 @@ class C_dokumen extends CI_Controller {
         $id_jenis_dokumen = $this->input->post('jenis_dokumen');
         $hak_akses = $this->session->userdata('hak_akses');
         $no_dokumen = $this->input->post('no_dokumen');
-        $row3 = $this->m_dokumen->get_by_id('upload_dokumen', 'no_dokumen', $no_dokumen);
 
-        $duplicate = $this->db->query("SELECT no_dokumen FROM upload_dokumen WHERE no_dokumen = '$no_dokumen' AND id_jenis_dokumen = '$row3->id_jenis_dokumen'")->num_rows();
+        $duplicate = $this->db->query("SELECT no_dokumen FROM upload_dokumen WHERE no_dokumen = '$no_dokumen'")->num_rows();
         
         $this->form_validation->set_rules('dokumen_induk','Dokumen Induk','required|trim', array('required'=>'Pilih dokumen induk...!'));
         $this->form_validation->set_rules('jenis_dokumen','Jenis Dokumen','required|trim', array('required'=>'Pilih jenis dokumen...!'));
         $this->form_validation->set_rules('nama_dokumen','Nama Dokumen','required|trim', array('required'=>'Masukkan nama dokumen...!'));
         $this->form_validation->set_rules('pemeriksa','Pemeriksa','required|trim', array('required'=>'Pilih pemeriksa...!'));
         $this->form_validation->set_rules('no_dokumen','No Dokumen','required|trim', array('required'=>'Masukkan nomor dokumen...!'));
+        $this->form_validation->set_rules('lokasi','Lokasi','required|trim', array('required'=>'Masukkan lokasi dokumen...!'));
 
 
         if (empty($_FILES['dokumen']['name'])){
@@ -175,8 +176,9 @@ class C_dokumen extends CI_Controller {
                                 $data = array(
                         'id_dokumen_induk' => $this->input->post('dokumen_induk'),
                         'id_jenis_dokumen' => $id_jenis_dokumen,
-                        'nama_dok'         => $this->input->post('nama_dokumen'),
-                        'no_dokumen'       => $this->input->post('no_dokumen'),
+                        'nama_dok'         => ucwords($this->input->post('nama_dokumen')),
+                        'no_dokumen'       => strtoupper($this->input->post('no_dokumen')),
+                        'lokasi'           => strtoupper($this->input->post('lokasi')),
                         'id_penyusun'      => $id_admin, 
                         'jabatan_penyusun' => $hak_akses,
                         'tgl_buat'         => date('Y-m-d'),
@@ -245,8 +247,9 @@ class C_dokumen extends CI_Controller {
                     $data = array(
                         'id_dokumen_induk' => $this->input->post('dokumen_induk'),
                         'id_jenis_dokumen' => $id_jenis_dokumen,
-                        'nama_dok'         => $this->input->post('nama_dokumen'),
-                        'no_dokumen'       => $this->input->post('no_dokumen'),
+                        'nama_dok'         => ucwords($this->input->post('nama_dokumen')),
+                        'no_dokumen'       => strtoupper($this->input->post('no_dokumen')),
+                        'lokasi'           => strtoupper($this->input->post('lokasi')),
                         'id_penyusun'      => $id_admin, 
                         'jabatan_penyusun' => $hak_akses,
                         'tgl_buat'         => date('Y-m-d'),
@@ -256,6 +259,7 @@ class C_dokumen extends CI_Controller {
                     $run = $this->m_dokumen->insert($data, 'upload_dokumen'); 
                     $ded = array(
                         'no_dokumen'  => $this->input->post('no_dokumen'),
+                        'tgl_diperiksa' => date('Y-m-d'),
                         'tgl_disahkan'=> date('Y-m-d')
                     );
                     $ruin = $this->m_dokumen->insert($ded, 'approve_dokumen');
@@ -602,884 +606,262 @@ class C_dokumen extends CI_Controller {
 
         $data['data'] = $this->m_dokumen->upload_approve(array('id_dokumen_induk'=>$id_dokumen_induk))->result();
         $data['dokumen_induk'] = $id_dokumen_induk;
+        $data['jenis_dokumen'] = $this->db->query("SELECT * FROM jenis_dokumen WHERE id_dokumen_induk = '$id_dokumen_induk'")->result();
         $this->templates->utama('dokumen/v_list_all_dokumen', $data);
     
     }
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function dokumen lama ke bawah 
-
-
-    public function dokumen_prosedur(){
-        $hak_akses = $this->session->userdata('hak_akses');
-        $table = 'dokumen_prosedur';
-        $data['dokumen'] = $this->m_dokumen->all_dokumen($table)->result_array();
-        if ($hak_akses == "admin_sampel"){
-        $this->templates->utama('dokumen/v_dokumen_prosedur', $data);
-        }
-        else if ($hak_akses == "ka_laboratorium" or $hak_akses == "manajer_mutu" or $hak_akses == "manajer_operasional"
-        or $hak_akses == "manajer_puncak"){
-            $this->templates->all_manager('dokumen/v_dokumen_prosedur', $data);
-        }
-        else if ($hak_akses == "manajer_teknik_mikro" or $hak_akses == "manajer_teknik_kimia" or $hak_akses = "manajer_teknik_farma"){
-            $this->templates->manager_teknik('dokumen/v_dokumen_prosedur');
-        }
-        else if ($hak_akses == "penyelia"){
-            $this->templates->penyelia('dokumen/v_dokumen_prosedur');
-        }
+    public function tambah_dokumen(){
+        $data['dokumen_induk'] = $this->db->query("SELECT * FROM dokumen_induk")->result();
+        $data['user'] = $this->m_admin->data_admin()->result();
+        $this->templates->utama('dokumen/v_form_tambah_dokumen', $data);
     }
 
-     public function dokumen_instruksi_kerja(){
-        $hak_akses = $this->session->userdata('hak_akses');
-        $table = 'dokumen_instruksi_kerja';
-        $data['dokumen'] = $this->m_dokumen->all_dokumen($table)->result_array();
-        if ($hak_akses == "admin_sampel"){
-            $this->templates->utama('dokumen/v_dokumen_instruksi_kerja', $data);
-            }
-            else if ($hak_akses == "ka_laboratorium" or $hak_akses == "manajer_mutu" or $hak_akses == "manajer_operasional"
-            or $hak_akses == "manajer_puncak" or $hak_akses == "analis"){
-                $this->templates->all_manager('dokumen/v_dokumen_instruksi_kerja', $data);
-            }
-            else if ($hak_akses == "manajer_teknik_mikro" or $hak_akses == "manajer_teknik_kimia" or $hak_akses = "manajer_teknik_farma"){
-                $this->templates->manager_teknik('dokumen/v_instruksi_kerja');
-            }
-            else if ($hak_akses == "penyelia"){
-                $this->templates->penyelia('dokumen/v_dokumen_instruksi_kerja');
-            }
-    }
-
-    public function dokumen_form(){
-        $hak_akses = $this->session->userdata('hak_akses');
-        $table = 'dokumen_form';
-        $data['dokumen'] = $this->m_dokumen->all_dokumen($table)->result_array();
-        if ($hak_akses == "admin_sampel"){
-            $this->templates->utama('dokumen/v_dokumen_form', $data);
-            }
-            else if ($hak_akses == "ka_laboratorium" or $hak_akses == "manajer_mutu" or $hak_akses == "manajer_operasional"
-            or $hak_akses == "manajer_puncak" or $hak_akses == "analis"){
-                $this->templates->all_manager('dokumen/v_dokumen_form', $data);
-            }
-            else if ($hak_akses == "manajer_teknik_mikro" or $hak_akses == "manajer_teknik_kimia" or $hak_akses = "manajer_teknik_farma"){
-                $this->templates->manager_teknik('dokumen/v_dokumen_form');
-            }
-            else if ($hak_akses == "penyelia"){
-                $this->templates->penyelia('dokumen/v_dokumen_form');
-            }
-    }
-
-    public function upload_dokumen(){
-        $data['dokumen'] = $this->m_dokumen->dokumen()->result_array();
-        $this->templates->utama('dokumen/v_upload_dokumen', $data);
-    }
-
-    public function insert_dokumen(){
-       $jenis_dokumen  = $this->input->post('jenis_dokumen');   
-       $judul   = $this->input->post('judul');
-       $kode   = $this->input->post('kode');
-       $lokasi   = $this->input->post('lokasi');
-       $dokumen   = $this->input->post('dokumen');
+    public function ajax_user(){
+        $user = $this->input->post('user');
+        $queri = $this->m_admin->detail_admin($user)->row();
+       
         
-       //DOKUMEN MUTU
-        if  ($jenis_dokumen == '1'){
+        $data = array(
+            'hak_akses' => $queri->hak_akses
+          ); 
+         echo json_encode($data);
+    }
 
-            $config['upload_path']          = './dokumen_mutu/';
-            $config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $this->load->library('upload', $config);
-            if($this->upload->do_upload('dokumen')){
-                $finfo = $this->upload->data();
-                $nama_dokumen = $finfo['file_name'];
-                
-        $dokumen_mutu = array(
-           'judul'  => $judul,
-           'kode'   => $kode,
-           'lokasi' => $lokasi,
-           'nama_dokumen'  => $nama_dokumen,
-           'dibuat' => date('Y-m-d')
-        );
-    
-        $insert_mutu['res'] = $this->m_dokumen->insert_dokumen($dokumen_mutu, 'dokumen_mutu');
+    public function list_AlljenisDokumen(){
+        $id_dokumen_induk = $this->input->post('dokumen_induk');
+        $jenis = $this->m_dokumen->jenis_dokumen("(id_dokumen_induk = '$id_dokumen_induk')")->result();  
         
-        $id_dm = $this->db->insert_id();
-        $tr_mutu = array(
-            'id_dm'         => $id_dm
-        );
-        $insert_tr_mutu['doc'] = $this->m_dokumen->insert_dokumen($tr_mutu, 'tr_dokumen_mutu');
+        // Buat variabel untuk menampung tag-tag option nya    
+        // Set defaultnya dengan tag option Pilih    
+        $lists = "<option value=''> Jenis Dokumen</option>";       
+            foreach($jenis as $data){      
+                $lists .= "<option value='".$data->id_jenis_dokumen."'>".$data->nama_dokumen."</option>"; 
+            // Tambahkan tag option ke variabel $lists    
+        }     
+         $callback = array('list_jenis_dokumen'=>$lists); // Masukan variabel lists tadi ke dalam array $callback dengan index array : list_kota   
+          echo json_encode($callback); // konversi varibael $callback menjadi JSON
 
-            if ($insert_mutu and $insert_tr_mutu ){
-                $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Sukses...!</b> Sukses Upload Dokumen </div>');
-            }else{
-                $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Gagal...!</b> Gagal Upload Dokumen </div>');
-            }
+    }
+
+    public function tangkap(){
+        $id_bidang = $this->input->post('id_bidang');
+        $jabatan_pemeriksa = $this->input->post('jabatan_pemeriksa');
+        $jabatan_pengesah = $this->input->post('jabatan_pengesah');
+        $id_pemeriksa = $this->input->post('pemeriksa');
+        $id_pengesah = $this->input->post('pengesah');
+
+        //jika tidak ada bidang
+        if ($id_bidang == ''){
+            $bidang = 'bidang null';
         }else{
-            echo $this->session->set_flashdata('pesan', 
-					'<script>
-								swal({
-								title: "Access Deny",
-								text: " File Not Supported",
-								type: "warning",
-								});
-							</script>');
+            $bidang = $id_bidang; 
         }
-        redirect ('c_dokumen/dokumen_mutu');
 
-        }else if ($jenis_dokumen == '2'){
-            $config['upload_path']          = './dokumen_prosedur/';
-            $config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $this->load->library('upload', $config);
-            if($this->upload->do_upload('dokumen')){
-                $finfo = $this->upload->data();
-                $nama_dokumen = $finfo['file_name'];
-                
-        $dokumen_prosedur = array(
-           'judul'  => $judul,
-           'kode'   => $kode,
-           'lokasi' => $lokasi,
-           'nama_dokumen'  => $nama_dokumen,
-           'dibuat' => date('Y-m-d')
-        );
-    
-        $insert_prosedur['res'] = $this->m_dokumen->insert_dokumen($dokumen_prosedur, 'dokumen_prosedur');
-        
-        $id_dp = $this->db->insert_id();
-        $tr_prosedur = array(
-            'id_dp'         => $id_dp
-        );
-        $insert_tr_prosedur['doc'] = $this->m_dokumen->insert_dokumen($tr_prosedur, 'tr_dokumen_prosedur');
+        // jika tidak ada pemeriksa 
+        if ($id_pemeriksa == ""){
+                $IdPemeriksa = 'id_pemeriksa nulll';
+                $jabatan_pem = 'jabatan pemeriksa null';
+        }else {
+                $IdPemeriksa = $id_pemeriksa;   
+                $jabatan_pem = $jabatan_pemeriksa;
+        }
 
-            if ($insert_prosedur and $insert_tr_prosedur ){
-                $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Sukses...!</b> Sukses Upload Dokumen </div>');
-            }else{
-                $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Gagal...!</b> Gagal Upload Dokumen </div>');
+        if ($id_pengesah == ""){
+            $IdPengesah     = 'id_pengesah nulll';
+            $jabatan_peng   = 'jabatan pengesah null';
+        }else {
+            $IdPengesah = $id_pengesah;
+            $jabatan_peng = $jabatan_pengesah;
             }
+
+        echo $IdPemeriksa."<br>";
+        echo $jabatan_pem."<br><br>";
+        echo $bidang."<br><br>";
+        echo $IdPengesah."<br>";
+        echo $jabatan_peng."<br>";
+    }
+
+
+
+    public function action_tambah_dokumen(){
+        $no_dokumen = $this->input->post('no_dokumen');
+        $this->form_validation->set_rules('dokumen_induk','Dokumen Induk','required|trim', array('required'=>'Pilih dokumen induk...!'));
+        $this->form_validation->set_rules('jenis_dokumen','Jenis Dokumen','required|trim', array('required'=>'Pilih jenis dokumen...!'));
+        $this->form_validation->set_rules('no_dokumen','Nomor Dokumen','required|trim', array('required'=>'Masukkan nomor dokumen...!'));
+        $this->form_validation->set_rules('nama_dokumen','Nama Dokumen','required|trim', array('required'=>'Masukkan nama dokumen...!'));
+        $this->form_validation->set_rules('lokasi','Lokasi','required|trim', array('required'=>'Masukkan lokasi dokumen...!'));
+        $this->form_validation->set_rules('penyusun','Penyusun','required|trim', array('required'=>'Pilih penyusun dokumen...!'));
+        //$this->form_validation->set_rules('pemeriksa','Pemeriksa','required|trim', array('required'=>'Pilih pemeriksa dokumen...!'));
+        //$this->form_validation->set_rules('pengesah','Pengesah','required|trim', array('required'=>'Pilih pengesah dokumen...!'));
+        $this->form_validation->set_rules('tgl_disahkan','Tanggal Disahkan','required|trim', array('required'=>'Masukkan tanggal...!'));
+
+        $id_bidang = $this->input->post('id_bidang');
+        $jabatan_pemeriksa = $this->input->post('jabatan_pemeriksa');
+        $jabatan_pengesah = $this->input->post('jabatan_pengesah');
+        $id_pemeriksa = $this->input->post('pemeriksa');
+        $id_pengesah = $this->input->post('pengesah');
+
+        //jika tidak ada bidang
+        if ($id_bidang == ''){
+            $bidang = null;
         }else{
-            echo $this->session->set_flashdata('pesan', 
-					'<script>
-								swal({
-								title: "Access Deny",
-								text: " File Not Supported",
-								type: "warning",
-								});
-							</script>');
+            $bidang = $id_bidang; 
         }
-        redirect ('c_dokumen/dokumen_prosedur');
 
-        }else if ($jenis_dokumen == '3'){
-            $config['upload_path']          = './dokumen_instruksi_kerja/';
-            $config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $this->load->library('upload', $config);
-            if($this->upload->do_upload('dokumen')){
-                $finfo = $this->upload->data();
-                $nama_dokumen = $finfo['file_name'];
-                
-        $dokumen_ik = array(
-           'judul'  => $judul,
-           'kode'   => $kode,
-           'lokasi' => $lokasi,
-           'nama_dokumen'  => $nama_dokumen,
-           'dibuat' => date('Y-m-d')
-        );
-    
-        $insert_ik['res'] = $this->m_dokumen->insert_dokumen($dokumen_ik, 'dokumen_instruksi_kerja');
-        
-        $id_dik = $this->db->insert_id();
-        $tr_ik = array(
-            'id_dik'         => $id_dik
-        );
-        $insert_tr_ik['doc'] = $this->m_dokumen->insert_dokumen($tr_ik, 'tr_dokumen_instruksi_kerja');
+        // jika tidak ada pemeriksa 
+        if ($id_pemeriksa == ""){
+                $IdPemeriksa = null;
+                $jabatan_pem = null;
+        }else {
+                $IdPemeriksa = $id_pemeriksa;   
+                $jabatan_pem = $jabatan_pemeriksa;
+        }
 
-            if ($insert_ik and $insert_tr_ik ){
-                $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Sukses...!</b> Sukses Upload Dokumen </div>');
-            }else{
-                $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Gagal...!</b> Gagal Upload Dokumen </div>');
+        if ($id_pengesah == ""){
+            $IdPengesah     = null;
+            $jabatan_peng   = null;
+        }else {
+            $IdPengesah = $id_pengesah;
+            $jabatan_peng = $jabatan_pengesah;
             }
-        }else{
-            echo $this->session->set_flashdata('pesan', 
-					'<script>
-								swal({
-								title: "Access Deny",
-								text: " File Not Supported",
-								type: "warning",
-								});
-							</script>');
-        }
-        redirect ('c_dokumen/dokumen_instruksi_kerja');
-
-        }else if ($jenis_dokumen == '4'){
-            $config['upload_path']          = './dokumen_form/';
-            $config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $this->load->library('upload', $config);
-            if($this->upload->do_upload('dokumen')){
-                $finfo = $this->upload->data();
-                $nama_dokumen = $finfo['file_name'];
-                
-        $dokumen_form = array(
-           'judul'  => $judul,
-           'kode'   => $kode,
-           'lokasi' => $lokasi,
-           'nama_dokumen'  => $nama_dokumen,
-           'dibuat' => date('Y-m-d')
-        );
     
-        $insert_form['res'] = $this->m_dokumen->insert_dokumen($dokumen_form, 'dokumen_form');
-        
-        $id_df = $this->db->insert_id();
-        $tr_form = array(
-            'id_df'         => $id_df
-        );
-        $insert_tr_form['doc'] = $this->m_dokumen->insert_dokumen($tr_form, 'tr_dokumen_form');
-
-            if ($insert_form and $insert_tr_form ){
-                $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Sukses...!</b> Sukses Upload Dokumen </div>');
-            }else{
-                $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				 <b>Gagal...!</b> Gagal Upload Dokumen </div>');
+        if (empty($_FILES['file']['name'])){
+            $this->form_validation->set_rules('file','File','required|trim', array('required'=>'Lampirkan file...!'));
             }
+        
+        if ($this->form_validation->run() == false){
+            $this->tambah_dokumen($this->uri->segment(3));
         }else{
-            echo $this->session->set_flashdata('pesan', 
-					'<script>
-								swal({
-								title: "Access Deny",
-								text: " File Not Supported",
-								type: "warning",
-								});
-							</script>');
-        }
-        redirect ('c_dokumen/dokumen_form');
-        }
-        
-        else{
-            echo $this->session->set_flashdata('pesan', 
-					'<script>
-								swal({
-								title: "Access Deny",
-								text: " Pilih Jenis Dokumen",
-								type: "warning",
-								});
-                            </script>');
-        }
-        redirect('c_dokumen/upload_dokumen');
-        
-    }
-
-    public function detail_dokumen_mutu(){
-        $id_dm = $this->input->post('rowid');
-        $where = array('id_dm' => $id_dm);
-        $dokumen['revisi'] = $this->m_dokumen->revisi_dokumen($where, 'tr_dokumen_mutu')->result_array();
-        $dokumen['dokumen_mutu'] = $this->m_dokumen->detail_dokumen($where, 'dokumen_mutu')->result_array();
-        $this->load->view('dokumen/v_detail_dokumen_mutu', $dokumen);
-    }
-
-    public function detail_dokumen_prosedur(){
-        $id_dp = $this->input->post('rowid');
-        $where = array('id_dp' => $id_dp);
-        $dokumen['revisi'] = $this->m_dokumen->revisi_dokumen($where, 'tr_dokumen_prosedur')->result_array();
-        $dokumen['dokumen_prosedur'] = $this->m_dokumen->detail_dokumen($where, 'dokumen_prosedur')->result_array();
-        $this->load->view('dokumen/v_detail_dokumen_prosedur', $dokumen);
-    }
-
-    public function detail_dokumen_instruksi_kerja(){
-        $id_dik = $this->input->post('rowid');
-        $where = array('id_dik' => $id_dik);
-        $dokumen['revisi'] = $this->m_dokumen->revisi_dokumen($where, 'tr_dokumen_instruksi_kerja')->result_array();
-        $dokumen['dokumen_ik'] = $this->m_dokumen->detail_dokumen($where, 'dokumen_instruksi_kerja')->result_array();
-        $this->load->view('dokumen/v_detail_dokumen_instruksi_kerja', $dokumen);
-    }
-
-    public function detail_dokumen_form(){
-        $id_df = $this->input->post('rowid');
-        $where = array('id_df' => $id_df);
-        $dokumen['revisi'] = $this->m_dokumen->revisi_dokumen($where, 'tr_dokumen_form')->result_array();
-        $dokumen['dokumen_form'] = $this->m_dokumen->detail_dokumen($where, 'dokumen_form')->result_array();
-        $this->load->view('dokumen/v_detail_dokumen_form', $dokumen);
-    }
-
-
-    public function hapus_dokumen_mutu($id_dm){
-        if ($this->session->userdata('hak_akses') != "admin_sampel"){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Access Deny",
-                        text: " Akses Ditolak",
-                        type: "warning",
-                        });
-                    </script>');
-                    
-    }else{
-    $where = array('id_dm' => $id_dm);
-    $hasil  = $this->m_dokumen->hapus_dokumen($where,'dokumen_mutu');
-        if($hasil){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-            swal("Success !", "Sukses Hapus Data !", "success"); 
-            </script>');
-        }else
-        {
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Failed",
-                        text: "Gagal Hapus Data",
-                        type: "warning",
-                        });
-                    </script>');
-        }
-    }
-    redirect('c_dokumen/dokumen_mutu');	
-    }
-
-    public function hapus_dokumen_prosedur($id_dp){
-        if ($this->session->userdata('hak_akses') != "admin_sampel"){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Access Deny",
-                        text: " Akses Ditolak",
-                        type: "warning",
-                        });
-                    </script>');
-                    
-    }else{
-    $where = array('id_dp' => $id_dp);
-    $hasil  = $this->m_dokumen->hapus_dokumen($where,'dokumen_prosedur');
-        if($hasil){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-            swal("Success !", "Sukses Hapus Data !", "success"); 
-            </script>');
-        }else
-        {
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Failed",
-                        text: "Gagal Hapus Data",
-                        type: "warning",
-                        });
-                    </script>');
-        }
-    }
-    redirect('c_dokumen/dokumen_prosedur');	
-    }
-
-    public function hapus_dokumen_instruksi_kerja($id_dik){
-        if ($this->session->userdata('hak_akses') != "admin_sampel"){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Access Deny",
-                        text: " Akses Ditolak",
-                        type: "warning",
-                        });
-                    </script>');
-                    
-    }else{
-    $where = array('id_dik' => $id_dik);
-    $hasil  = $this->m_dokumen->hapus_dokumen($where,'dokumen_instruksi_kerja');
-        if($hasil){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-            swal("Success !", "Sukses Hapus Data !", "success"); 
-            </script>');
-        }else
-        {
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Failed",
-                        text: "Gagal Hapus Data",
-                        type: "warning",
-                        });
-                    </script>');
-        }
-    }
-    redirect('c_dokumen/dokumen_instruksi_kerja');	
-    }
-
-    public function hapus_dokumen_form($id_df){
-        if ($this->session->userdata('hak_akses') != "admin_sampel"){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Access Deny",
-                        text: " Akses Ditolak",
-                        type: "warning",
-                        });
-                    </script>');
-                    
-    }else{
-    $where = array('id_df' => $id_df);
-    $hasil  = $this->m_dokumen->hapus_dokumen($where,'dokumen_form');
-        if($hasil){
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-            swal("Success !", "Sukses Hapus Data !", "success"); 
-            </script>');
-        }else
-        {
-            echo $this->session->set_flashdata('pesan', 
-            '<script>
-                        swal({
-                        title: "Failed",
-                        text: "Gagal Hapus Data",
-                        type: "warning",
-                        });
-                    </script>');
-        }
-    }
-    redirect('c_dokumen/dokumen_form');	
-    }
-
-    public function update_dokumen_mutu(){
-        $id_dm = $this->input->post('id_dm');
-        if($this->input->post('ubah_dokumen')){
-			$config['upload_path']          = './dokumen_mutu/';
-			$config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
             
-            $where= array('id_dm'=> $id_dm);
-			$ambil_data = $this->m_dokumen->ambil_dokumen($where, 'dokumen_mutu');
+            $config['upload_path']          = './dokumen/';
+            $config['allowed_types']        = 'pdf';
+            $config['remove_space']         = true;
+            $this->load->library('upload', $config);
             
-			if($ambil_data->num_rows() > 0){
-				$pros=$ambil_data->row();
-				$dokumen=$pros->nama_dokumen;
-				
-				  if(is_file($lok=FCPATH.'/dokumen_mutu/'.$dokumen)){
-					unlink($lok);
-				}
-			}
-
-			$this->load->library('upload', $config);
-			
-			if($this->upload->do_upload('dokumen')){
+            if($this->upload->do_upload('file')){
 				$finfo = $this->upload->data();
 				$nama_dokumen = $finfo['file_name'];
 
-		$data = array(
-            'id_dm'     =>$id_dm,
-            'revisi'    => date('Y-m-d')
-		);
-		$data2 = array(
-			'judul'             => $this->input->post('judul'),
-			'kode'              => $this->input->post('kode'),
-			'lokasi'            => $this->input->post('no_telp'),
-            'nama_dokumen'      => $nama_dokumen
-		);
-        $hasi['res'] = $this->m_dokumen->insert_dokumen($data,'tr_dokumen_mutu');
+                $data = array(
+                    'no_dokumen'        => strtoupper($this->input->post('no_dokumen')),
+                    'id_dokumen_induk'  => $this->input->post('dokumen_induk'),
+                    'nama_dok'          => ucwords($this->input->post('nama_dokumen')),
+                    'lokasi'            => strtoupper($this->input->post('lokasi')),
+                    'id_jenis_dokumen'  => $this->input->post('jenis_dokumen'),
+                    'id_penyusun'       => $this->input->post('penyusun'),
+                    'jabatan_penyusun'  => $this->input->post('jabatan_penyusun'),
+                    'status'            => 2,
+                    'tgl_buat'          => 0,
+                    'dok'               => $nama_dokumen
+                ); 
+                $update = $this->m_dokumen->insert($data, 'upload_dokumen');
+
+                $data_2  = array(
+                    'no_dokumen'        => $no_dokumen,
+                    'bidang'            => $bidang,
+                    'id_pemeriksa'      => $IdPemeriksa,
+                    'jabatan_pemeriksa' => $jabatan_pem,
+                    'id_pengesah'       => $IdPengesah,
+                    'jabatan_pengesah'  => $jabatan_peng,
+                    'tgl_diperiksa'     => 0,
+                    'tgl_disahkan'      => date('Y-m-d', strtotime($this->input->post('tgl_disahkan')))
+                );
+                $update2 = $this->m_dokumen->insert($data_2, 'approve_dokumen');
+                    if ($update = 1 AND $update2 = 1){
+                        $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong><center> Perbaikan dokumen berhasil dikirim </center></strong></div>');
+                    }else{
+                        $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong><center> Perbaikan dokumen gagal dibuat </center></strong></div>');
+                    }
+            }else{
+				echo $this->session->set_flashdata('pesan', 
+					'<script>
+						swal({
+						title: "Failed",
+						text: "Format file tidak didukung",
+						type: "warning",
+						});
+						</script>');
+                        }
+            redirect('c_dokumen/tambah_dokumen');
+        }
+    }
+
+    public function detail_all_dokumen($no_dokumen){
+        $where = array('upload_dokumen.no_dokumen'=> $no_dokumen);
+        $row = $this->m_dokumen->get_by_id('upload_dokumen', 'no_dokumen', $no_dokumen);
+        $data['id_dokumen_induk'] = $row->id_dokumen_induk;
+        $data['data'] = $this->m_dokumen->upload_approve($where)->result();
+        $data['data_2'] = $this->m_dokumen->DokumenRevisi($where)->result();
+        $data['no_dokumen'] = $no_dokumen; 
+        $this->templates->utama('dokumen/v_detail_all_dokumen', $data);
+    }
+
+    public function modal_dokumen_revisi(){
+        $data['no_dokumen'] = $this->input->post('rowid');
+        $data['action'] = base_url('c_dokumen/action_upload_dokumenRevisi');
+        $this->load->view('dokumen/v_modal_dokumen_revisi', $data);
+    }
+
+    public function action_upload_dokumenRevisi(){
+        $no_dokumen = $this->input->post('no_dokumen');
+        $this_day = date('Y-m-d');
+
+        $cek = $this->db->query("SELECT * FROM revisi WHERE no_dokumen = '$no_dokumen' AND tgl_revisi = '$this_day'");
+
+        if ($cek->num_rows() > 0){
+            echo $this->session->set_flashdata('pesan', 
+            '<script>
+                swal({
+                title: "Failed",
+                text: "Duplikat Dokumen Revisi",
+                type: "warning",
+                });
+                </script>');
+        }else{
+        $config['upload_path']          = './dokumen_revisi/';
+        $config['allowed_types']        = 'pdf';
+        $config['remove_space']        =   true;
         
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data2, 'dokumen_mutu');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Sukses Update Dokumen !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Gagal Update Dokumen",
-					type: "warning",
-					});
-				</script>');
-				}
-			}else{
-				echo $this->session->set_flashdata('pesan', 
-							'<script>
-								swal({
-								title: "Failed",
-								text: "File Not Supported",
-								type: "warning",
-								});
-							</script>');
-							}
-		}
-	else{
-		$data = array(
-			'judul'      => $this->input->post('judul'),
-			'kode'   => $this->input->post('kode'),
-			'lokasi'   => $this->input->post('lokasi')
-        );
+        $this->load->library('upload', $config);
         
-		$where = array('id_dm'=>$id_dm);
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data, 'dokumen_mutu');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Success Update Data !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Failed Update Data",
-					type: "warning",
-					});
-				</script>');
-				}
-				
+        if($this->upload->do_upload('file')){
+            $finfo = $this->upload->data();
+            $nama_dokumen = $finfo['file_name'];
+
+            $data = array(
+                'no_dokumen'        => $no_dokumen,
+                'tgl_revisi'        => date('Y-m-d'),
+                'dok_revisi'        => $nama_dokumen
+            ); 
+            $update = $this->m_dokumen->insert($data, 'revisi');
+                if ($update = 1 AND $update2 = 1){
+                    $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong><center> Berhasil </center></strong></div>');
+                }else{
+                    $this->session->set_flashdata('pesan','<div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong><center> Gagal </center></strong></div>');
+                }
+        }else{
+            echo $this->session->set_flashdata('pesan', 
+                '<script>
+                    swal({
+                    title: "Failed",
+                    text: "Format file tidak didukung",
+                    type: "warning",
+                    });
+                    </script>');
+                    }
+        }
+        redirect('c_dokumen/detail_all_dokumen/'.$no_dokumen);	
+                    
     }
-    redirect('c_dokumen/dokumen_mutu');
-        
-    }
-
-    public function update_dokumen_prosedur(){
-        $id_dp = $this->input->post('id_dp');
-        if($this->input->post('ubah_dokumen')){
-			$config['upload_path']          = './dokumen_prosedur/';
-			$config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $where= array('id_dp'=> $id_dp);
-			$ambil_data = $this->m_dokumen->ambil_dokumen($where, 'dokumen_prosedur');
-            
-			if($ambil_data->num_rows() > 0){
-				$pros=$ambil_data->row();
-				$dokumen=$pros->nama_dokumen;
-				
-				  if(is_file($lok=FCPATH.'/dokumen_prosedur/'.$dokumen)){
-					unlink($lok);
-				}
-			}
-
-			$this->load->library('upload', $config);
-			
-			if($this->upload->do_upload('dokumen')){
-				$finfo = $this->upload->data();
-				$nama_dokumen = $finfo['file_name'];
-
-		$data = array(
-            'id_dp'     =>$id_dp,
-            'revisi'    => date('Y-m-d')
-		);
-		$data2 = array(
-			'judul'             => $this->input->post('judul'),
-			'kode'              => $this->input->post('kode'),
-			'lokasi'            => $this->input->post('no_telp'),
-            'nama_dokumen'      => $nama_dokumen
-		);
-        $hasi['res'] = $this->m_dokumen->insert_dokumen($data,'tr_dokumen_prosedur');
-    
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data2, 'dokumen_prosedur');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Sukses Update Dokumen !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Gagal Update Dokumen",
-					type: "warning",
-					});
-				</script>');
-				}
-			}else{
-				echo $this->session->set_flashdata('pesan', 
-							'<script>
-								swal({
-								title: "Failed",
-								text: "File Not Supported",
-								type: "warning",
-								});
-							</script>');
-							}
-		}
-	else{
-		$data = array(
-			'judul'      => $this->input->post('judul'),
-			'kode'   => $this->input->post('kode'),
-			'lokasi'   => $this->input->post('lokasi')
-        );
-        
-		$where = array('id_dp'=>$id_dp);
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data, 'dokumen_prosedur');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Success Update Data !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Failed Update Data",
-					type: "warning",
-					});
-				</script>');
-				}
-				
-    }
-    redirect('c_dokumen/dokumen_prosedur');
-
-    }
-
-    public function update_dokumen_instruksi_kerja(){
-        $id_dik = $this->input->post('id_dik');
-        if($this->input->post('ubah_dokumen')){
-			$config['upload_path']          = './dokumen_instruksi_kerja/';
-			$config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $where= array('id_dik'=> $id_dik);
-			$ambil_data = $this->m_dokumen->ambil_dokumen($where, 'dokumen_instruksi_kerja');
-            
-			if($ambil_data->num_rows() > 0){
-				$pros=$ambil_data->row();
-				$dokumen=$pros->nama_dokumen;
-				
-				  if(is_file($lok=FCPATH.'/dokumen_instruksi_kerja/'.$dokumen)){
-					unlink($lok);
-				}
-			}
-
-			$this->load->library('upload', $config);
-			
-			if($this->upload->do_upload('dokumen')){
-				$finfo = $this->upload->data();
-				$nama_dokumen = $finfo['file_name'];
-
-		$data = array(
-            'id_dik'     =>$id_dik,
-            'revisi'    => date('Y-m-d')
-		);
-		$data2 = array(
-			'judul'             => $this->input->post('judul'),
-			'kode'              => $this->input->post('kode'),
-			'lokasi'            => $this->input->post('no_telp'),
-            'nama_dokumen'      => $nama_dokumen
-		);
-        $hasi['res'] = $this->m_dokumen->insert_dokumen($data,'tr_dokumen_instruksi_kerja');
-    
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data2, 'dokumen_instruksi_kerja');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Sukses Update Dokumen !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Gagal Update Dokumen",
-					type: "warning",
-					});
-				</script>');
-				}
-			}else{
-				echo $this->session->set_flashdata('pesan', 
-							'<script>
-								swal({
-								title: "Failed",
-								text: "File Not Supported",
-								type: "warning",
-								});
-							</script>');
-							}
-		}
-	else{
-		$data = array(
-			'judul'      => $this->input->post('judul'),
-			'kode'   => $this->input->post('kode'),
-			'lokasi'   => $this->input->post('lokasi')
-        );
-        
-		$where = array('id_dik'=>$id_dik);
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data, 'dokumen_instruksi_kerja');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Success Update Data !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Failed Update Data",
-					type: "warning",
-					});
-				</script>');
-				}
-				
-    }
-    redirect('c_dokumen/dokumen_instruksi_kerja');
-
-    }
-
-    public function update_dokumen_form(){
-        $id_df = $this->input->post('id_df');
-        if($this->input->post('ubah_dokumen')){
-			$config['upload_path']          = './dokumen_form/';
-			$config['allowed_types']        = 'pdf';
-            $config['max_size']             = 5044070;
-            
-            $where= array('id_df'=> $id_df);
-			$ambil_data = $this->m_dokumen->ambil_dokumen($where, 'dokumen_form');
-            
-			if($ambil_data->num_rows() > 0){
-				$pros=$ambil_data->row();
-				$dokumen=$pros->nama_dokumen;
-				
-				  if(is_file($lok=FCPATH.'/dokumen_form/'.$dokumen)){
-					unlink($lok);
-				}
-			}
-
-			$this->load->library('upload', $config);
-			
-			if($this->upload->do_upload('dokumen')){
-				$finfo = $this->upload->data();
-				$nama_dokumen = $finfo['file_name'];
-
-		$data = array(
-            'id_df'     =>$id_df,
-            'revisi'    => date('Y-m-d')
-		);
-		$data2 = array(
-			'judul'             => $this->input->post('judul'),
-			'kode'              => $this->input->post('kode'),
-			'lokasi'            => $this->input->post('no_telp'),
-            'nama_dokumen'      => $nama_dokumen
-		);
-        $hasi['res'] = $this->m_dokumen->insert_dokumen($data,'tr_dokumen_form');
-    
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data2, 'dokumen_form');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Sukses Update Dokumen !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Gagal Update Dokumen",
-					type: "warning",
-					});
-				</script>');
-				}
-			}else{
-				echo $this->session->set_flashdata('pesan', 
-							'<script>
-								swal({
-								title: "Failed",
-								text: "File Not Supported",
-								type: "warning",
-								});
-							</script>');
-							}
-		}
-	else{
-		$data = array(
-			'judul'      => $this->input->post('judul'),
-			'kode'   => $this->input->post('kode'),
-			'lokasi'   => $this->input->post('lokasi')
-        );
-        
-		$where = array('id_df'=>$id_df);
-		$hasil['res'] = $this->m_dokumen->update_dokumen($where, $data, 'dokumen_form');
-			if($hasil){
-				echo $this->session->set_flashdata('pesan', 
-						'<script>
-						swal("Success !", "Success Update Data !", "success"); 
-						</script>');
-			}
-			else{
-				echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Failed Update Data",
-					type: "warning",
-					});
-				</script>');
-				}
-				
-    }
-    redirect('c_dokumen/dokumen_form');
-
-    }
-
-
 
 }
 ?>

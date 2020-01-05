@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_admin extends CI_Controller {
-
+class C_admin extends MY_Controller {
     public function __construct(){
 		parent:: __construct();
+		$this->cekLogin();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_login');
@@ -11,10 +11,7 @@ class C_admin extends CI_Controller {
 		$this->load->model('m_pelanggan');
 		$this->load->model('m_aset');
 		$this->load->model('m_merk');
-    }
-    
-    public function index(){
-		$this->templates->utama('admin/v_dashboard_admin');
+	
     }
 
     public function registrasi_admin(){
@@ -51,7 +48,7 @@ class C_admin extends CI_Controller {
 				if($hasil){
 					echo $this->session->set_flashdata('pesan', 
 					'<script>
-					swal("Success !", "Success Delete Data !", "success"); 
+					swal("Success !", "Sukses Hapus Data !", "success"); 
 					</script>');
 				}else
 				{
@@ -59,7 +56,7 @@ class C_admin extends CI_Controller {
 					'<script>
 								swal({
 								title: "Failed",
-								text: "Failed Delete Data",
+								text: "Gagal Hapus Data",
 								type: "warning",
 								});
 							</script>');
@@ -100,8 +97,8 @@ class C_admin extends CI_Controller {
 			'hak_akses' =>$this->input->post('hak_akses')
 		);
 		$data2 = array(
-			'nama'      => $this->input->post('nama'),
-			'alamat '   => $this->input->post('alamat'),
+			'nama'      => ucwords($this->input->post('nama')),
+			'alamat '   => ucwords($this->input->post('alamat')),
 			'no_telp'   => $this->input->post('no_telp'),
             'foto'      =>$nama_foto,
             'diubah'    => date('Y-m-d')
@@ -114,7 +111,7 @@ class C_admin extends CI_Controller {
 			if($hasil){
 				echo $this->session->set_flashdata('pesan', 
 						'<script>
-						swal("Success !", "Success Update Data !", "success"); 
+						swal("Success !", "Sukses Perbarui Data !", "success"); 
 						</script>');
 			}
 			else{
@@ -173,75 +170,95 @@ class C_admin extends CI_Controller {
 				}
 				redirect('c_admin/daftar_admin');
 	}
-				
 }
 
 // function action untuk menambahkan admin
     public function insert_registrasi(){
+				
+		$this->form_validation->set_rules('nama','Nama','required|trim', array('required'=>'Masukkan nama pegawai...!'));
+        $this->form_validation->set_rules('alamat','Alamat','required|trim', array('required'=>'Masukkan alamat pegawai...!'));
+		$this->form_validation->set_rules('no_telp','No Telepon','required|trim', array('required'=>'Masukkan nomor telepon...!'));
+		$this->form_validation->set_rules('email','Email','required|trim|valid_email', array('required'=>'Masukkan Email...!','valid_email'=>'Email anda tidak valid...!'));
+		$this->form_validation->set_rules('hak_akses','Hak Akses','required', array('required'=>'Masukkan hak akses...!'));
+		$this->form_validation->set_rules('bidang','idang','required', array('required'=>'Pilih bidang...!'));
 
-    $auth = array(
-        'email'     => $this->input->post('email'),
-        'password'  => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-        'hak_akses'  => $this->input->post('hak_akses'),
-        'aktif'     => 1
-    );
-    $insert_auth['res'] = $this->m_login->registration($auth, 'auth');
+		if (empty($_FILES['photo']['name'])){
+			$this->form_validation->set_rules('photo','Photo','required|trim', array('required'=>'Lampirkan file...!'));
+			}
 
-    $id_auth = $this->db->insert_id();
+			if ($this->form_validation->run() == false){
+					$this->registrasi_admin();
+			}else{
 
-    $config['upload_path']          = './photo/';
-	$config['allowed_types']        = 'gif|jpg|png';
-	$config['max_size']             = 2044070;
-	$config['max_width']            = 1024;
-    $config['max_height']           = 768;
-            
-    $this->load->library('upload', $config);
+		$id_bidang = $this->input->post('id_bidang');
+			if ($id_bidang == ''){
+				$bidang = null;
+			}else{
+				$bidang = $id_bidang; 
+			}
 
-        if($this->upload->do_upload('photo')){
-			$finfo = $this->upload->data();
-            $nama_foto = $finfo['file_name'];
-            
-    $admin = array(
-        'id_auth'   =>$id_auth,
-        'nama'      =>htmlspecialchars($this->input->post('nama')),
-        'alamat'    =>htmlspecialchars($this->input->post('alamat')),
-		'no_telp'   =>htmlspecialchars($this->input->post('no_telp')),
-		'id_bidang'	=>htmlspecialchars($this->input->post('id_bidang')),
-        'foto'      => $nama_foto,
-        'dibuat'    => date('Y-m-d'),
-        'diubah'    => date('Y-m-d')
-    );
+			$auth = array(
+				'email'     => $this->input->post('email'),
+				'password'  => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+				'hak_akses'  => $this->input->post('hak_akses'),
+				'aktif'     => 1
+			);
+			$insert_auth['res'] = $this->m_login->registration($auth, 'auth');
 
-    $insert_admin['res2'] = $this->m_admin->registrasi($admin, 'admin');
-        if ($insert_admin  and $insert_auth){
-            echo $this->session->set_flashdata('pesan', 
-                '<script>
-                swal("Success !", "Sukses Tambah Admin !", "success"); 
-                </script>');
-                redirect ('c_admin/daftar_admin', 'refresh');
-        }else{
-            echo $this->session->set_flashdata('pesan', 
-				'<script>
-					swal({
-					title: "Failed",
-					text: "Gagal Tambah Admin",
-					type: "warning",
-					});
-				</script>');
-        }
+			$id_auth = $this->db->insert_id();
+			$config['upload_path']          = './photo/';
+			$config['allowed_types']        = 'gif|jpg|png';
+			$config['max_size']             = 2044070;
+			$config['max_width']            = 1024;
+			$config['max_height']           = 768;
+					
+			$this->load->library('upload', $config);
 
-    }else{
-        echo $this->session->set_flashdata('pesan', 
-                    '<script>
-                        swal({
-                        title: "Failed",
-                        text: "File Not Supported",
-                        type: "warning",
-                        });
-                    </script>');
-                    }
-        redirect ('c_admin/registration', 'refresh');
-    }
+				if($this->upload->do_upload('photo')){
+					$finfo = $this->upload->data();
+					$nama_foto = $finfo['file_name'];
+
+			$admin = array(
+				'id_auth'   =>$id_auth,
+				'nama'      =>ucwords(htmlspecialchars($this->input->post('nama'))),
+				'alamat'    =>ucwords(htmlspecialchars($this->input->post('alamat'))),
+				'no_telp'   =>htmlspecialchars($this->input->post('no_telp')),
+				'id_bidang'	=> $bidang,
+				'foto'      => $nama_foto,
+				'dibuat'    => date('Y-m-d'),
+				'diubah'    => date('Y-m-d')
+			);
+
+			$insert_admin['res2'] = $this->m_admin->registrasi($admin, 'admin');
+				if ($insert_admin  and $insert_auth){
+					echo $this->session->set_flashdata('pesan', 
+						'<script>
+						swal("Success !", "Sukses Tambah Admin !", "success"); 
+						</script>');
+				}else{
+					echo $this->session->set_flashdata('pesan', 
+						'<script>
+							swal({
+							title: "Failed",
+							text: "Gagal Tambah Admin",
+							type: "warning",
+							});
+						</script>');
+				}
+
+			}else{
+				echo $this->session->set_flashdata('pesan', 
+							'<script>
+								swal({
+								title: "Failed",
+								text: "Format File Tidak Didukung",
+								type: "warning",
+								});
+							</script>');
+							}
+        redirect ('c_admin/registrasi_admin');
+	}
+}
 
     public function daftar_pelanggan(){
         $data['pelanggan'] = $this->m_pelanggan->data_pelanggan()->result_array();

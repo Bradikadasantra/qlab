@@ -1,9 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_pelanggan extends CI_Controller {
+class C_pelanggan extends MY_Controller {
 
     public function __construct(){
-		parent:: __construct();
+        parent:: __construct();
+        $this->cekLogin();
         date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_pelanggan');
@@ -15,8 +16,7 @@ class C_pelanggan extends CI_Controller {
     public function index(){
       redirect('c_dashboard');
     }
-    
-    
+
   public function tampil_riwayat(){
       $id_auth = $this->session->userdata('id_auth');
       $cari_id_pelanggan = $this->m_pelanggan->ambil_info_pelanggan($id_auth)->row();
@@ -48,7 +48,7 @@ class C_pelanggan extends CI_Controller {
 
     public function ajax_tagihan(){
       $no_tagihan = $this->input->post('no_order');
-      $kueri = $this->db->query("SELECT * FROM tagihan WHERE no_tagihan = '$no_tagihan'")->roW();
+      $kueri = $this->db->query("SELECT * FROM tagihan WHERE no_tagihan = '$no_tagihan'")->row();
 
       $data = array(
         'jumlah_dana'  => $kueri->jumlah_tagihan
@@ -58,18 +58,22 @@ class C_pelanggan extends CI_Controller {
 
     public function action_konfirmasiPembayaran(){
     
+      $this->form_validation->set_rules('no_order','Nomor Order','required|trim', array('required'=>'Pilih nomor order...!'));
       $this->form_validation->set_rules('nama_pengirim','Nama Pengirim','required|trim', array('required'=>'Masukkan nama pengirim...!'));
       $this->form_validation->set_rules('bank_pengirim','Bank Pengirim','required|trim', array('required'=>'Masukkan Bank anda...!'));
       $this->form_validation->set_rules('jumlah_dana','Jumlah Dana','required|trim|numeric', array('required'=>'Masukkan Jumlah Nominal Transfer...!', 'numeric'=> 'Masukkan angka yang valid...!'));
       $this->form_validation->set_rules('tgl_bayar','Tgl Bayar','required|trim', array('required'=>'Masukkan Tanggal Bayar...!'));
     
+      if (empty($_FILES['bukti_bayar']['name'])){
+        $this->form_validation->set_rules('bukti_bayar','Bukti Bayar','required|trim', array('required'=>'Lampirkan file...!'));
+        }
+
           if ($this->form_validation->run() == false){
             $this->konfirmasi_pembayaran();
           }else{
             $config['upload_path']          = './bukti_bayar/';
             $config['allowed_types']        = 'png|jpg|jpeg';
-            $config['max_width']            = 1024;
-            $config['max_height']           = 768;
+            $config['max_size']             =  2048;
             
             $this->load->library('upload', $config);
            
@@ -79,7 +83,7 @@ class C_pelanggan extends CI_Controller {
                
               $data = array(
                 'no_tagihan'       => $this->input->post('no_order'),
-                'pemilik_rekening' => $this->input->post('nama_pengirim'),
+                'pemilik_rekening' => ucwords($this->input->post('nama_pengirim')),
                 'bank'             => $this->input->post('bank_pengirim'),
                 'jumlah'           => $this->input->post('jumlah_dana'),
                 'bukti_byr'        => $bukti_bayar,
@@ -265,7 +269,7 @@ class C_pelanggan extends CI_Controller {
 
         $pdf->Cell(130);
         $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell(4,1,'Jakarta'.', '.WKT(date('Y-m-d')),0,1,'L');
+        $pdf->Cell(4,1,'Jakarta'.', '.WKT(date($baris->selesai_sampel)),0,1,'L');
         $pdf->Cell(112);
         $pdf->Cell(4,6,'Laboratorium Jasa Pengujian dan Penelitian (QLab)',0,1,'L');
         $pdf->Cell(117);
@@ -322,7 +326,7 @@ class C_pelanggan extends CI_Controller {
       $pdf->Cell(27);
       $pdf->Cell(4,5,':',0,0,'L');
       $pdf->SetFont('Arial', '', 8);
-      $pdf->Cell(5,5, 'INV/20198989',0,1,'L');
+      $pdf->Cell(5,5, $baris->no_tagihan,0,1,'L');
       
       //nama pelanggan
       $pdf->SetFont('Arial', 'B', 8);

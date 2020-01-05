@@ -27,7 +27,18 @@
                         </div>
                         <div class="form-group">
                             <label for="bank">Bank</label>
-                            <input type="text" class="form-control" id="bank" value="<?php echo $baris->bank ?>" readonly>
+                            <select class="form-control" id="bank" readonly>
+                                    <?php
+                                        $id_bank  = $baris->bank;
+                                        $kueri = $this->db->query("SELECT * FROM bank")->result();
+                                        foreach ($kueri as $row):
+                                            if ($id_bank == $row->id_bank){
+                                    ?>
+                                        <option value="<?php echo $row->id_bank; ?>" selected><?php echo $row->bank ?></option>
+                                            <?php } else { ?>
+                                        <option value="<?php echo $row->id_bank; ?>"><?php echo $row->bank ?></option>
+                                            <?php } endforeach; ?>
+                            </select>
                         </div>
                     </div>
                 </div>

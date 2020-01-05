@@ -1,9 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_bahan_uji extends CI_Controller {
+class C_bahan_uji extends MY_Controller {
 	
 	public function __construct(){
-		parent:: __construct();
+        parent:: __construct();
+        $this->cekLogin();
 		date_default_timezone_set('Asia/Jakarta');
         $this->load->library('templates');
         $this->load->model('m_bahan_uji');
