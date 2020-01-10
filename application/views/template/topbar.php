@@ -16,25 +16,53 @@
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
             <!-- Nav Item - Alerts -->
-  
-
+            <li class="nav-item">
+                <i class="fas fa-calendar-alt fa-fw mt-4 my-1"></i> <span class="text-gray-800" style="font-size:13px;"><?php echo WKT(date('Y-m-d')); ?></span> 
+            </li>
             <div class="topbar-divider d-none d-sm-block"></div>
 
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $this->session->userdata('email');?></span>
+                  <!-- pelanggan -->
+                <?php 
+                  $hak_akses = $this->session->userdata('hak_akses');
+                  
+                  if ($hak_akses == 12){
+                    $cari_pel = $this->m_admin->cari_pelangganAuth(array('auth.id_auth'=> $this->session->userdata('id_auth')))->row();
+                    $foto_pel = $cari_pel->foto; 
+                      if ($foto_pel == 'Default.jpg'){
+                ?>
                 <img class="img-profile rounded-circle" src="<?php echo base_url('assets/img/user1.jpg') ?>">
+                      <?php } else { ?>
+                <img class="img-profile rounded-circle" src="<?php echo base_url('photo/'.$foto_pel) ?>">
+                      <?php } } else { ?>
+                
+                <!-- not pelanggan -->
+                <?php  
+                    $cari_ad = $this->m_admin->cari_adminAuth(array('auth.id_auth'=> $this->session->userdata('id_auth')))->row();
+                    $foto_adm = $cari_ad->foto; 
+                    if ($foto_adm == 'Default.jpg'){ ?>
+                      <img class="img-profile rounded-circle" src="<?php echo base_url('assets/img/user1.jpg') ?>">
+                      <?php } else { ?>
+                        <img class="img-profile rounded-circle" src="<?php echo base_url('photo/'.$foto_adm) ?>">
+                        <?php } } ?> 
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
+                <a class="dropdown-item" href="<?php echo base_url('c_admin/form_editProfil') ?>">
+                  <i class="fas fa-id-card fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profil
+                </a>
+
+                <a class="dropdown-item" href="<?php echo  base_url('c_admin/ubah_password')?>">
+                  <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Password
                 </a>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
+                  Keluar
                 </a>
               </div>
             </li>

@@ -3,6 +3,7 @@
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-10 offset-1">
+                <div class="alert alert-danger"><i class="fas fa-info fa-fw fa-sm"></i><b>Data diri belum lengkap</b>, Lengkapi data diri anda terlebih dahulu ...!</div>
                     <div class="card">
                         <div class="card-header bg-primary">
                             <h5 class="text-light">Lengkapi data anda !!</h5>
@@ -32,7 +33,7 @@
 
                                             <div class="form-group">    
                                             <label for="alamat_instansi">Alamat Instansi</label>
-                                                <input type="text" class="form-control" name="alamat_instansi" id="alamat_instansi" placeholder="Masukkan Alamat Instansi" value="<?php echo set_value('alamat_instansi') ?>">
+                                                <textarea class="form-control" name="alamat_instansi" id="alamat_instansi" rows="4" placeholder ="Masukkan alamat instansi"><?php echo set_value('alamat_instansi') ?></textarea>
                                                 <?php echo form_error('alamat_instansi','<small class="text-danger">','</small>') ?>
                                             </div>
                                         </div>

@@ -43,11 +43,17 @@ class M_admin extends CI_Model{
 		return $this->db->get();
 	}
 
+	public function ambil_pelanggan($where){
+		$this->db->select('*');
+		$this->db->from('pelanggan');
+		$this->db->where($where);
+		return $this->db->get();
+	}
+
 	public function hapus_admin($where, $table){
 		$this->db->where($where);
 		return $this->db->delete($table);
 		}
-
 
 	public function update_admin($where,$data,$table){		
 			$this->db->where($where);
@@ -71,6 +77,14 @@ class M_admin extends CI_Model{
 		$this->db->select('*');
 		$this->db->from('admin');
 		$this->db->join('auth','auth.id_auth = admin.id_auth');
+		$this->db->where($where);
+		return $this->db->get();
+	}
+
+	public function cari_pelangganAuth($where){
+		$this->db->select('*');
+		$this->db->from('pelanggan');
+		$this->db->join('auth','auth.id_auth = pelanggan.id_auth');
 		$this->db->where($where);
 		return $this->db->get();
 	}

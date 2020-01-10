@@ -9,6 +9,7 @@ class C_pelanggan extends MY_Controller {
         $this->load->library('templates');
         $this->load->model('m_pelanggan');
         $this->load->model('m_registrasi_sampel');
+        $this->load->model('m_admin');
         $this->load->library('pdf');
         $this->load->library('hasilPemeriksaan');
     }

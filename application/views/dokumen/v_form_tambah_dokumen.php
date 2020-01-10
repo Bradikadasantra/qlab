@@ -110,8 +110,9 @@
                                                 <div class="col-md-8">
                                                 <input type="file" class="form-control" name="file" id="file" placeholder="Lampirkan file dokumen">
                                                 <small class="mt-3">Format File harus beresktensi .pdf</small>
-                                                <?php echo form_error('file','<small class="text-danger">','</small>') ?>
+                                                <p>  <?php echo form_error('file','<small class="text-danger">','</small>') ?></p>
                                                 </div>
+                                              
                                             </div>
                                         </div>
 
@@ -148,6 +149,21 @@
 
                                             <div class="form-group row pt-2">
                                                 <div class="col-md-4">
+                                                <label for="tgl_disusun"> Tgl disusun*</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-calendar fa-sm"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control datepicker-here" data-position="top left"  data-language="en" name="tgl_disusun" id="tgl_disusun" value="<?php echo set_value('tgl_disusun') ?>">
+                                                    </div>
+                                                    <?php echo form_error('tgl_disusun','<small class="text-danger">','</small>') ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row pt-2">
+                                                <div class="col-md-4">
                                                 <label for="tgl_disahkan"> Tgl disahkan*</label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -155,7 +171,7 @@
                                                         <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-calendar fa-sm"></i></span>
                                                         </div>
-                                                        <input type="text" class="form-control datepicker-here" data-position="top left"  data-language="en" name="tgl_disahkan" id="tgl_disahkan" value="<?php echo set_value('tgl_disahkan') ?>"  value="<?php echo set_value('tgl_disahkan') ?>">
+                                                        <input type="text" class="form-control datepicker-here" data-position="bottom right"  data-language="en" name="tgl_disahkan" id="tgl_disahkan" value="<?php echo set_value('tgl_disahkan') ?>">
                                                     </div>
                                                     <?php echo form_error('tgl_disahkan','<small class="text-danger">','</small>') ?>
                                                 </div>
@@ -167,13 +183,14 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="ya">
-                                                        <label class="form-check-label" for="inlineRadio1">Ya</label>
+                                                        <input class="form-check-input" type="radio" name="bidang" id="bidang" value="ya">
+                                                        <label class="form-check-label" for="bidang">Ya</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="tidak">
-                                                        <label class="form-check-label" for="inlineRadio2">Tidak</label>
+                                                        <input class="form-check-input" type="radio" name="bidang" id="bidang" value="tidak">
+                                                        <label class="form-check-label" for="bidang">Tidak</label>
                                                     </div> 
+                                                    <p><?php echo form_error('bidang','<small class="text-danger">','</small>') ?></p>
                                                 </div>
                                             </div>    
 

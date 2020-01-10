@@ -95,6 +95,12 @@ class C_permintaan_uji extends MY_Controller {
             $data['detail']     = $this->m_registrasi_sampel->all_data_perbidang2($where, array('id_bidang'=> $get->id_bidang), array('status_sampel !='=> 6))->result();
             $this->templates->utama('admin/v_detail_permintaan_uji_mt', $data);
         }
+        else if ($hak_akses == 5 ){
+          $data['status']     = $row->status; 
+          $data ['no_order']  = $no_order;
+          $data['detail']     = $this->m_registrasi_sampel->order_orderDetail($where)->result();
+          $this->templates->utama('admin/v_detail_manajer_opr', $data);
+      }
         else {
             $data['status']     = $row->status; 
             $data ['no_order']  = $no_order;
@@ -1042,12 +1048,15 @@ class C_permintaan_uji extends MY_Controller {
       $this->load->view('admin/v_rincian_penolakan', $data);
     }
 
-
     public function list_sertifikat(){
       $data['data'] = $this->m_registrasi_sampel->view_sertifikat(array('status_tagihan'=>2), array('status_sampel !=' => 3))->result();
       $this->templates->utama('admin/v_list_sertifikat', $data);
     }
 
+    public function view_manajer_opr(){
+      $data['list']  = $this->m_registrasi_sampel->list_perNoOrder()->result();
+      $this->templates->utama('admin/v_view_manajer_opr', $data);
+    }
 
   }
 ?>

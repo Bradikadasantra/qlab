@@ -1,8 +1,9 @@
 
     <form action ="<?php echo $action;  ?>" method="post" enctype="multipart/form-data">
+        <input type="hidden" value="<?php echo $param;?>" name="param">
         <input type="hidden" value="<?php echo $no_dokumen;?>" name="no_dokumen">
         <div class="form-group">
-            <label for="file">Lampirkan Dokumen Revisi</label>
+            <label for="file"><?php echo $lampirkan;  ?></label>
             <input type="file" class="form-control" name="file" id="file" required>
             <small>Dokumen harus berekstensi (.pdf)</small>
         </div>

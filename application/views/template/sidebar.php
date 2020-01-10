@@ -43,8 +43,9 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Sampel:</h6>
+            <h6 class="collapse-header">Sampel:</h6>
             <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/approval_sa')?>">Permintaan Uji Sampel</a>
+            <a class="collapse-item" href="#">Manajemen</a>
             </div>
         </div>
       </li>
@@ -103,7 +104,7 @@
         </a>
         <div id="laporan" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Manajemen User</h6>
+            <h6 class="collapse-header">Laporan</h6>
             <a class="collapse-item" href="<?php echo base_url('c_laporan/keuangan') ?>">Keuangan</a>
             <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel')?>">Rekap Registrasi Sampel</a>
           </div>
@@ -168,7 +169,7 @@
     <span>Beranda</span></a>
 </li>
 
-  <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-cog"></i>
           <span>Sampel</span>
@@ -179,7 +180,7 @@
             <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/approve_HasilPemeriksaan') ?>">Approval Hasil Uji</a>
           </div>
         </div>
-      </li>
+    </li>
 
 <li class="nav-item">
   <a class="nav-link" href="<?php echo base_url('c_dokumen') ?>">
@@ -191,6 +192,37 @@
 ?>
 <!--END MENU MANAJER TEKNIK-->
 
+<!--START MENU Manajer Operasional-->
+<?php
+  if($hak_akses == 5){
+?>
+<!-- Nav Item - Dashboard -->
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dashboard') ?>">
+    <i class="fas fa-fw fa-home"></i>
+    <span>Beranda</span></a>
+</li>
+
+  <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          <i class="fas fa-fw fa-cog"></i>
+          <span>Sampel</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/view_manajer_opr') ?>"> Permintaan uji sampel</a>
+            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/rekap_registrasiSampel')?>">Rekap Registrasi Sampel</a>
+          </div>
+        </div>
+    </li>
+
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dokumen') ?>">
+    <i class="fas fa-fw fa-file-pdf"></i>
+    <span>Dokumen</span></a>
+</li>
+  <?php } ?>
+<!--END MENU Manajer Operasional-->
 
 <!--START MENU TEKNIS/ANALIS-->
 <?php 
@@ -226,7 +258,7 @@
 
 <!--START MENU ALL MANAJER-->
 <?php
-  if($hak_akses == 4 or $hak_akses == 5 or $hak_akses == 2 or $hak_akses == 8 or $hak_akses == 3){
+  if($hak_akses == 4 or $hak_akses == 2 or $hak_akses == 8 or $hak_akses == 3){
 ?>
 <!-- Nav Item - Dashboard -->
 <li class="nav-item">
@@ -241,8 +273,8 @@
     <span>Dokumen</span></a>
 </li>
   <?php } ?>
-  
 <!--END MENU ALL MANAJER-->
+
 
 <!-- menu koor pengedali dokumen-->
 <?php
