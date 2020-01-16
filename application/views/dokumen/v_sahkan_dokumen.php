@@ -17,7 +17,7 @@
                             <?php foreach ($data as $baris): ?>
                                 <div class="alert alert-primary" role="alert">
                                     <a href="<?php echo base_url('c_dokumen/list_sahkan_dokumen/'.$baris->id_jenis_dokumen) ?>"><?php echo $baris->nama_dokumen; ?></a>
-                                    <span class=" badge badge-danger mx-2"><?php echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND jabatan_pengesah = '$hak_akses')", "(status = '1')") ?></span>
+                                    <span class=" badge badge-danger mx-2"><?php echo notif_jenisDokumen("(id_jenis_dokumen ='$baris->id_jenis_dokumen' AND id_pengesah = '$id_admin')", "(status = '1')") ?></span>
                                 </div>
                             <?php endforeach; ?>
                         </div>

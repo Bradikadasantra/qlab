@@ -105,6 +105,15 @@
 
                                             <div class="form-group pt-2 row">
                                                 <div class="col-md-4">
+                                                    <label for="jabatan_penyusun"> Jabatan Penyusun*</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" id="jabatan_penyusun" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group pt-2 row">
+                                                <div class="col-md-4">
                                                     <label for="file"> Lampirkan Dokumen*</label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -134,16 +143,34 @@
 
                                             <div class="form-group pt-2 row">
                                                 <div class="col-md-4">
+                                                    <label for="jabatan_pemeriksa"> Jabatan Pemeriksa*</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" id="jabatan_pemeriksa" readonly>
+                                                </div>
+                                            </div>
+
+                                        
+                                            <div class="form-group pt-2 row">
+                                                <div class="col-md-4">
                                                     <label for="pengesah"> Pengesah</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <select class="custom-select" name="pengesah" id="pengesah" onchange="isi_otomatis3()">
                                                     <option value="" selected> ~ Pengesah</option>
-                                                        <?php foreach ($user as $row): ?>
+                                                    <?php foreach ($user as $row): ?>
                                                         <option value="<?php echo $row->id_admin ?>"><?php echo $row->nama; ?></option>
                                                         <?php endforeach;  ?>
-                                                       <!-- <?php echo form_error('pengesah','<small class="text-danger">','</small>') ?> -->
                                                     </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group pt-2 row">
+                                                <div class="col-md-4">
+                                                    <label for="jabatan_pengesah"> Jabatan Pengesah*</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" class="form-control" id="jabatan_pengesah" readonly>
                                                 </div>
                                             </div>
 
@@ -207,9 +234,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="hidden" class="form-control" name="jabatan_penyusun" id="hak_akses">
-                                        <input type="hidden" class="form-control" name="jabatan_pemeriksa" id="hak_akses2">
-                                        <input type="hidden" class="form-control"  name="jabatan_pengesah" id="hak_akses3">
                                     </div>
                                 </div>                                        
                             </div>
@@ -272,7 +296,7 @@ function isi_otomatis(){
         }).done(function (data) {
             var json = data,
             obj = JSON.parse(json);
-            $('#hak_akses').val(obj.hak_akses);
+            $('#jabatan_penyusun').val(obj.jabatan);
         });
     }
 
@@ -285,7 +309,7 @@ function isi_otomatis(){
         }).done(function (data) {
             var json = data,
             obj = JSON.parse(json);
-            $('#hak_akses2').val(obj.hak_akses);
+            $('#jabatan_pemeriksa').val(obj.jabatan);
         });
     }
 
@@ -298,7 +322,7 @@ function isi_otomatis(){
         }).done(function (data) {
             var json = data,
             obj = JSON.parse(json);
-            $('#hak_akses3').val(obj.hak_akses);
+        $('#jabatan_pengesah').val(obj.jabatan);
         });
     }
 </script>

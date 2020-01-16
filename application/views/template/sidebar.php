@@ -235,17 +235,11 @@
     <span>Beranda</span></a>
 </li>
 
-  <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>Sampel</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="<?php echo base_url('c_permintaan_uji/approval_tek')?>">Sampel Siap Uji</a>
-          </div>
-        </div>
-      </li>
+<li class="nav-item">
+<a class="nav-link" href="<?php echo base_url('c_permintaan_uji/approval_tek') ?>">
+    <i class="fas fa-fw fa-cog"></i>
+    <span>Sampel</span></a>
+</li>
 
 <li class="nav-item">
   <a class="nav-link" href="<?php echo base_url('c_dokumen') ?>">
@@ -276,9 +270,9 @@
 <!--END MENU ALL MANAJER-->
 
 
-<!-- menu koor pengedali dokumen-->
+<!-- menu koor-->
 <?php
-  if($hak_akses == 9 OR $hak_akses == 10 OR $hak_akses == 11 OR $hak_akses == 13){
+  if($hak_akses == 9 OR $hak_akses == 10 OR $hak_akses == 13){
 ?>
 <!-- Nav Item - Dashboard -->
 <li class="nav-item">
@@ -293,8 +287,32 @@
     <span>Dokumen</span></a>
 </li>
   <?php } ?>
+<!--end -->
 
+<!-- MENU KOOR PENGENDALI DOKUMEN -- >
+<?php
+  if($hak_akses == 11){
+?>
+<!-- Nav Item - Dashboard -->
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dashboard') ?>">
+    <i class="fas fa-fw fa-home"></i>
+    <span>Beranda</span></a>
+</li>
 
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dokumen/list_identitas_dokumen') ?>">
+    <i class="fas fa-fw fa-file-signature"></i>
+    <span>Identitas Dokumen</span>
+    </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link" href="<?php echo base_url('c_dokumen') ?>">
+    <i class="fas fa-fw fa-file-pdf"></i>
+    <span>Dokumen</span></a>
+</li>
+  <?php } ?>
 <!--end -->
 
 

@@ -9,8 +9,9 @@ class M_admin extends CI_Model{
 	public function hak_akses($id){
 		$this->db->select('*');
 		$this->db->from('auth');
+		$this->db->join('admin', 'admin.id_auth = auth.id_auth');
 		$this->db->join('hak_akses','hak_akses.id_hak_akses = auth.hak_akses');
-		$this->db->where('id_hak_akses', $id);
+		$this->db->where('id_admin', $id);
 		return $this->db->get();
 	}
 

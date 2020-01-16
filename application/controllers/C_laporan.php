@@ -193,18 +193,18 @@ class C_laporan extends MY_Controller {
             $pdf->Cell(30,7,$baris->lokasi,1,0,'C');
             
             // apakah ada dokumen yang telah direvisi ?
-            $kue = $this->db->query("SELECT * FROM revisi WHERE no_dokumen = '$baris->no_dokumen'")->result_array();
-            $result = array();
-            foreach ($kue as $row => $v){
-                    array_push($result, $v);
-            }
+           // $kue = $this->db->query("SELECT * FROM revisi WHERE no_dokumen = '$baris->no_dokumen'")->result_array();
+           // $result = array();
+            //foreach ($kue as $row => $v){
+              //      array_push($result, $v);
+           // }
 
             for($i=0; $i<5; $i++){
-                if (!empty($result[$i]['no_dokumen'])){
-                    $pdf->Cell(23,7,date('d-m-Y', strtotime($result[$i]['tgl_revisi'])),1,0,'C');
-                }else{
-                    $pdf->Cell(23,7,'-',1,0,'C');
-                }
+                //if (!empty($result[$i]['no_dokumen'])){
+                  //  $pdf->Cell(23,7,date('d-m-Y', strtotime($result[$i]['tgl_revisi'])),1,0,'C');
+                //}else{
+             $pdf->Cell(23,7,'-',1,0,'C');
+                //}
             }
             $pdf->Cell(0,7,'',0,1,'C');
             endforeach; 

@@ -30,6 +30,12 @@
                     <div class="row mb-4">
                         <div class="col-md">
                             <a href="<?php echo base_url('c_laporan/keuangan') ?>" class="btn btn-primary btn-sm"><i class="fas fa-redo fa-fw text-cen"></i> Refresh</a>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-print"></i> Print</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="">Lpaoran</a>
+                                    </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-2">

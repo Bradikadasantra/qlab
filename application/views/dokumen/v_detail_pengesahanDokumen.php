@@ -45,23 +45,34 @@
                                                 echo $row->nama; 
                                             ?>
                                             </td></tr>
-                                            <tr><td>Jabatan Penyusun</td><td>:
+                                            
+
+                                            <tr><td>Peyusun</td><td>
                                             <?php 
-                                                $row = $this->m_dokumen->get_by_id('hak_akses','id_hak_akses', $baris->jabatan_penyusun);
-                                                echo $row->hak_akses; 
+                                                $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_penyusun);
+                                                echo $row->nama. ' ('.hak_akses($baris->id_penyusun).')';
                                             ?>
                                             </td></tr>
 
-                                            <tr><td>Pemeriksa</td><td>:
+                                            <tr><td>Pemeriksa</td><td>
                                             <?php 
-                                                $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_pemeriksa);
-                                                echo $row->nama; 
+                                                if ($baris->id_pemeriksa == ''){
+                                                    echo "-";
+                                                }else{
+                                                    $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_pemeriksa);
+                                                    echo $row->nama. ' ('.hak_akses($baris->id_pemeriksa).')';
+                                                }
                                             ?>
                                             </td></tr>
-                                            <tr><td>Jabatan Pemeriksa</td><td>:
+
+                                            <tr><td>Pengesah</td><td>
                                             <?php 
-                                                $row = $this->m_dokumen->get_by_id('hak_akses','id_hak_akses', $baris->jabatan_pemeriksa);
-                                                echo $row->hak_akses; 
+                                            if ($baris->id_pengesah == ''){
+                                                echo "-";
+                                            }else{
+                                                $row = $this->m_dokumen->get_by_id('admin', 'id_admin', $baris->id_pengesah);
+                                                echo $row->nama. ' ('.hak_akses($baris->id_pengesah).')';
+                                            }
                                             ?>
                                             </td></tr>
                                             <tr><td>Status Dokumen</td><td>: <?php  echo StatusDokumen($baris->status)?></td></tr>

@@ -10,16 +10,12 @@
                 ?>
             <div class="card">
                 <div class="card-body">
-                    <small><i class="fas fa-file-pdf fa-fw fa-sm"></i> <?php $nama = $this->m_dokumen->get_by_id('dokumen_induk', 'id_dokumen_induk', $dokumen_induk);
+                    <small><i class="fas fa-file-pdf fa-fw fa-sm"></i> Dokumen <span class="fas fa-chevron-right fa-fw mx-1"></span> <?php $nama = $this->m_dokumen->get_by_id('dokumen_induk', 'id_dokumen_induk', $dokumen_induk);
                         echo $nama->dokumen;
                     ?></small>   
                     <div class="row mt-4">
                         <div class="col-md">
-                            <?php 
-                                if ($this->session->userdata('hak_akses') == 01){
-                            ?>
                             <a href="<?php echo base_url('c_dokumen/tambah_dokumen') ?>" class="btn btn-secondary btn-sm"><i class="fas fa-plus fa-fw"></i> Dokumen</a>   
-                                <?php } ?>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-print"></i> Print Dokumen</button>
                                     <div class="dropdown-menu">
@@ -55,7 +51,7 @@
                                                 <td><?php echo $baris->nama_dok ?></td>
                                                 <td><?php echo $baris->lokasi; ?></td>
                                                 <td> <a href="<?php echo base_url('ViewerJS/#../dokumen/'.$baris->dok)?>"><img src="<?php echo base_url('assets/img/pdf.png')?>" style="width:20px; height:20px"></a></td>
-                                                <td><a href="<?php echo base_url('c_dokumen/detail_all_dokumen/'.$baris->no_dokumen)?>" class="btn btn-primary btn-sm"><i class="fas fa-eye fa-fw"></i> Detail</a></td>
+                                                <td><a href="<?php echo base_url('c_dokumen/detail_dokumen/'.$baris->no_dokumen.'/all_dokumen')?>" class="btn btn-primary btn-sm"><i class="fas fa-eye fa-fw"></i> Detail</a></td>
                                             </tr>
                                         <?php endforeach; ?> 
                                     </tbody>

@@ -386,6 +386,7 @@ function StatusDokumen($s){
 		case 2 :return '<span class="badge badge-success"> Disahkan</span>';break;
 		case 3 :return '<span class="badge badge-danger"> Ditolak</span>';break;
 		case 4 :return '<span class="badge badge-warning"> Diajukan Ulang</span>';break;
+		case 5 :return '<span class="badge badge-warning"> Revisi</span>';break;
 
 		}
 }

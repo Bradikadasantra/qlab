@@ -97,72 +97,19 @@
                             </div>
                             <div class="row mt-5">
                                 <div class="col-md">
-                                <?php if ($baris->status != 2) {?>
-                                <a href="#myModal" data-toggle="modal" data-id="<?php echo $no_dokumen; ?>" class="btn btn-info btn-sm"><i class="fas fa-edit fa-fw"></i> Edit</a>
-                                <?php } else { ?>
-                                    <a href="#myModal" data-toggle="modal" data-id="<?php echo $no_dokumen; ?>" class="btn btn-info btn-sm disabled"><i class="fas fa-edit fa-fw"></i> Edit</a>
-                                <?php } ?>
-                                <a href="#konfirmasi_hapus" class='btn btn-danger btn-sm' data-toggle='modal' data-id="<?php echo base_url('c_dokumen/hapus_dokumen/'.$no_dokumen)?>"><i class="fas fa-trash fa-sm"></i> Hapus</a>
+                                <a href="<?php echo base_url('c_dokumen/riwayat') ?>" class="btn btn-primary btn-sm mt-5"><i class="fas fa-angle-double-left"></i> Kembali</a>
+                                <a href="#konfirmasi_hapus" class='btn btn-danger btn-sm mt-5' data-toggle='modal' data-id="<?php echo base_url('c_dokumen/hapus_dokumen/'.$no_dokumen)?>"><i class="fas fa-trash fa-sm"></i> Hapus</a>
                                 </div>
                             </div>
                             <?php endforeach; ?>
                             <!-- Dokumen revisi -->
-                            <hr class="mt-2">
-                           <h5 class="text-dark mt-4"> Revisi Dokumen</h5>
-                            <div class="row mt-3">
-                                <div class="col-md">
-                                    <table class="table table-sm tableborderless">
-                                        <thead class="thead-light text-center">
-                                            <th>Revisi</th>
-                                            <th>Nama dokumen</th>
-                                            <th>Tanggal Revisi</th>
-                                            <th>Dokumen</th>
-                                            <th>Aksi</th>
-                                        </thead>
-                                        <tbody class="text-center">
-                                            <?php $no = 1; foreach ($data_2 as $row): ?>
-                                                <tr>
-                                                    <td><?php echo "Revisi ke - ".$no++; ?></td>
-                                                    <td><?php echo $row->nama_dok; ?></td>
-                                                    <td><?php echo WKT($row->tgl_revisi); ?></td>
-                                                    <td><a href="<?php echo base_url('ViewerJS/#../dokumen_revisi/'.$row->dok_revisi)?>"><img src="<?php echo base_url('assets/img/pdf.png')?>" style="width:20px; height:20px"> Dokumen</a></td>
-                                                    <td>
-                                                    <a href="#konfirmasi_hapus" class='btn btn-danger btn-sm' data-toggle='modal' data-id="<?php echo base_url('c_dokumen/hapus_dokumen_revisi/'.$row->id_revisi)?>"><i class="fas fa-trash fa-sm"></i></a>
-                                                    <a href="#edit_revisi" class='btn btn-info btn-sm' data-toggle='modal' data-id="<?php echo $row->id_revisi; ?>"><i class="fas fa-edit  fa-sm"></i></a>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach;  ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <a href="<?php echo base_url('c_dokumen/riwayat') ?>" class="btn btn-primary btn-sm mt-5"><i class="fas fa-angle-double-left"></i> Kembali</a>
-                            <?php  if ($status == 2 ) { ?>
-                            <a href="#upload_revisi" data-toggle="modal" data-id="<?php echo $no_dokumen; ?>" class="btn btn-success btn-sm mt-5"><i class="fas fa-info fa-fw"></i> Revisi</a>
-                            <?php } else { ?>
-                                <a href="#upload_revisi" data-toggle="modal" data-id="<?php echo $no_dokumen; ?>" class="btn btn-success btn-sm mt-5 disabled"><i class="fas fa-info fa-fw"></i> Revisi</a>
-                            <?php } ?>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade bd-example-modal-lg"  id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Edit Dokumen</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					  <span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="fetched-data"></div>
-				</div>
-			</div>
-		</div>
-	</div>
     
     <div class="modal fade" id="konfirmasi_hapus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -216,22 +163,6 @@
 </div>
 
 <script>
-    $(document).ready(function(){
-        $('#myModal').on('show.bs.modal', function (e) {
-			var rowid = $(e.relatedTarget).data('id');
-            //menggunakan fungsi ajax untuk pengambilan data
-            $.ajax({
-                type : 'post',
-				url : "<?php echo base_url('c_dokumen/edit_all_dokumen')?>",
-				 data :  'rowid='+ rowid,
-				 
-                success : function(data){
-					    $('.fetched-data').html(data);
-                }
-            });
-         });
-    });
-
     $(document).ready(function(){
         $('#upload_revisi').on('show.bs.modal', function (e) {
 			var rowid = $(e.relatedTarget).data('id');

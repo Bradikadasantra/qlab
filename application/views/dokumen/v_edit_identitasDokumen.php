@@ -11,6 +11,8 @@
                 <?php foreach ($dokumen as $baris): ?>
                 <div class="row">
                     <div class="col-md">   
+                    <input type="hidden" name="no_dokumen" value="<?php echo $baris->no_dokumen; ?>">
+                    <input type="text" name="param" value="<?php echo $param; ?>">
                         <div class="form-group">
                             <label for="dokumen_induk"> Dokumen Induk</label>
                             <select class="form-control" name="dokumen_induk">
@@ -41,6 +43,20 @@
                         </div>
                         
                         <div class="form-group">
+                            <label for="penyusun"> Penyusun</label>
+                            <select class="form-control" name="penyusun" id="penyusun" disabled>
+                                <?php 
+                                    $peny = $baris->id_penyusun;
+                                    foreach ($user as $row):
+                                        if ($peny == $row->id_admin){
+                                ?>
+                                <option value="<?php echo $row->id_admin; ?>" selected><?php echo $row->nama; echo " (". hak_akses($baris->id_penyusun).")" ?></option>
+                                        <?php } else { ?>
+                                <option value="<?php echo $row->id_admin; ?>"><?php echo $row->nama; ?></option>
+                                        <?php } endforeach;  ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="nomor_dokumen"> Nomor Dokumen</label>
                             <input type="text" class="form-control" name="no_dokumen" id="no_dokumen" value="<?php echo $baris->no_dokumen;?>" readonly>
                         </div>
@@ -53,63 +69,61 @@
                         <div class="form-group">
                             <label for="lokasi"> Lokasi</label>
                             <input type="text" class="form-control" name="lokasi" id="lokasi" value="<?php echo $baris->lokasi;?>">
-                        </div> 
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jml_hlm"> Jumlah Halaman</label>
+                            <input type="text" class="form-control" name="jml_hlm" id="jml_hlm" value="<?php echo $baris->jml_hlm;?>">
+                        </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-group">
-                            <label for="penyusun"> Penyusun</label>
-                            <select class="form-control" name="penyusun" id="penyusun" disabled>
-                                <?php 
-                                    $peny = $baris->jabatan_penyusun;
-                                    foreach ($hak_akses as $row):
-                                        if ($peny == $row->id_hak_akses){
-                                ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>" selected><?php echo $row->hak_akses; ?></option>
-                                        <?php } else { ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>"><?php echo $row->hak_akses; ?></option>
-                                        <?php } endforeach;  ?>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
                             <label for="pemeriksa"> Pemeriksa</label>
-                            <select class="form-control" name="pemeriksa" id="pemeriksa">
+                            <select class="form-control" name="pemeriksa" id="pemeriksa" onchange = "isi_otomatis2()">
+                            <option value="" selected> ~Pilih Pemeriksa </option>
                                 <?php 
-                                    $pemer = $baris->jabatan_pemeriksa; 
-                                    foreach ($hak_akses as $row):
-                                        if ($pemer == $row->id_hak_akses){
+                                    $pemer = $baris->id_pemeriksa; 
+                                    foreach ($user as $row):
+                                        if ($pemer == $row->id_admin){
                                 ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>" selected><?php echo $row->hak_akses; ?></option>
+                                <option value="<?php echo $row->id_admin; ?>" selected><?php echo $row->nama; ?></option>
                                         <?php } else { ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>"><?php echo $row->hak_akses; ?></option>
+                                <option value="<?php echo $row->id_admin; ?>"><?php echo $row->nama; ?></option>
                                         <?php } endforeach;  ?>
                             </select>
                         </div>
-
-                        <?php 
-                            if ($baris->jabatan_pengesah != null){
-                        ?>
+                        
                         <div class="form-group">
-                            <label for="pengesah"> Pengesah</label>
-                            <select class="form-control" name="pengesah" id="pengesah">
+                            <label for="jabatan_pemeriksa">Jabatan Pemeriksa</label>
+                            <input type="text" class="form-control" name="jabatan_pemeriksa" id="jabatan_pemeriksa" value="<?php if ($baris->id_pemeriksa == ''){echo "-"; }else{ echo hak_akses($baris->id_pemeriksa);} ?>" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pengesah"> ~Pengesah</label>
+                            <select class="form-control" name="pengesah" id="pengesah" onchange="isi_otomatis3()"> 
+                                            <option value="" selected> Pilih Pengesah </option>
                                 <?php 
-                                    $pen = $baris->jabatan_pengesah;
-                                    foreach ($hak_akses as $row):
-                                        if ($pen == $row->id_hak_akses){
+                                    $pen = $baris->id_pengesah;
+                                    foreach ($user as $row):
+                                        if ($pen == $row->id_admin){
                                 ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>" selected><?php echo $row->hak_akses; ?></option>
+                                <option value="<?php echo $row->id_admin; ?>" selected><?php echo $row->nama; ?></option>
                                         <?php } else { ?>
-                                <option value="<?php echo $row->id_hak_akses; ?>"><?php echo $row->hak_akses; ?></option>
+                                <option value="<?php echo $row->id_admin; ?>"><?php echo $row->nama; ?></option>
                                 <?php } endforeach;  ?>
                             </select>
                         </div>
-                        <?php } ?>
+                   
+                        <div class="form-group">
+                            <label for="jabatan_pengesah"> Jabatan Pengesah</label>
+                            <input type="text" class="form-control" name="jabatan_pengesah" id="jabatan_pengesah" value="<?php if ($baris->id_pengesah == ''){ echo "-";}else{ echo hak_akses($baris->id_pengesah);} ?>" readonly>
+                        </div>
 
                         <?php if ($baris->bidang != null) { ?>
                         <div class="form-group">
                             <label for="bidang"> Bidang</label>
-                            <select class="form-control" name="bidang" id="bidang">
+                            <select class="form-control" name="bidang" id="bidang" disabled>
                                 <?php 
                                     $kueri = $this->db->query("SELECT * FROM bidang")->result();
                                     $bid = $baris->bidang; 
@@ -135,7 +149,6 @@
                                 </div>  
                             </div>
                         </div>   
-
 
                         <div class="form-group ya bu">
                             <input type="file" name="dokumen" class="form-control">
@@ -165,4 +178,30 @@
         }
         });
         });
+
+    function isi_otomatis2(){
+        var user = $("#pemeriksa").val();
+        $.ajax({
+            url: "<?php echo base_url('c_dokumen/ajax_user')?>",
+            data:"user="+user ,
+            method:"POST"
+        }).done(function (data) {
+            var json = data,
+            obj = JSON.parse(json);
+            $('#jabatan_pemeriksa').val(obj.jabatan);
+        });
+    }
+
+    function isi_otomatis3(){
+        var user = $("#pengesah").val();
+        $.ajax({
+            url: "<?php echo base_url('c_dokumen/ajax_user')?>",
+            data:"user="+user ,
+            method:"POST"
+        }).done(function (data) {
+            var json = data,
+            obj = JSON.parse(json);
+            $('#jabatan_pengesah').val(obj.jabatan);
+        });
+    }
 </script>
