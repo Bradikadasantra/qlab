@@ -10,16 +10,16 @@
                 ?>
             <div class="card">
                 <div class="card-body">
-                    <small><i class="fas fa-list fa-fw"></i> List Sertifikat</small><br>
+                    <small><i class="fas fa-list fa-fw"></i> List Hasil Uji</small><br>
                     <div class="row mt-4">
                         <div class="col-md">
                             <table class="table table-sm mt-4" id="mytable">
                                 <thead class="thead-light  text-center">
                                     <th>No</th>
-                                    <th>Nomor Sertifikat</th>
+                                    <th>Nomor Hasil Uji</th>
                                     <th>Pemilik</th>
                                     <th>Instansi</th>
-                                    <th>Sertifikat</th>
+                                    <th>Hasil Uji</th>
                                 </thead>
                                 <tbody class="text-center">
                                     <?php

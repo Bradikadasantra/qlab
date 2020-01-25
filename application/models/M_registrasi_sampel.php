@@ -207,6 +207,38 @@ class M_registrasi_sampel extends CI_Model{
         return $this->db->get();
     }
 
+    public function laporan_keuangan($no_order, $bidang){
+        $this->db->select('*');
+        $this->db->from('order');
+        $this->db->join('order_detail', 'order_detail.no_order = order.no_order');
+        $this->db->join('sampel', 'sampel.id_order_detail = order_detail.id_order_detail');
+        $this->db->join('pemeriksaan', 'pemeriksaan.id_sampel = sampel.id_sampel');
+        $this->db->where($no_order);
+        $this->db->where($bidang);
+        return $this->db->get();
+    }
+
+  public function list_keuangan($where, $where2){
+        $this->db->select('*');
+        $this->db->from('order');
+        $this->db->join('tagihan','tagihan.no_order = order.no_order');
+        $this->db->where('status_tagihan', '2');
+        $this->db->where($where);
+        $this->db->where($where2);
+        return $this->db->get();
+    }
+
+    public function getJumlah($no_order, $bidang){
+        $this->db->select('SUM(biaya_pemeriksaan) AS jml');
+        $this->db->from('order');
+        $this->db->join('order_detail', 'order_detail.no_order = order.no_order');
+        $this->db->join('sampel', 'sampel.id_order_detail = order_detail.id_order_detail');
+        $this->db->join('pemeriksaan', 'pemeriksaan.id_sampel = sampel.id_sampel');
+        $this->db->where($no_order);
+        $this->db->where($bidang);
+        return $this->db->get();
+    }
+
     public function all_sampel($where){
         $this->db->select('*');
         $this->db->from('sampel');

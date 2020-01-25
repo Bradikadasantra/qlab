@@ -17,11 +17,11 @@
                             <form action="" method="post" class="form-inline">
                                  <div class="form-group mb-2">
                                     <label for="dari_tgl" class="p-2"> Dari tgl:</label>
-                                    <input type="text" name="tgl1" class="form-control datepicker-here" data-position="bottom left" data-date-format="dd-mm-yyyy" data-language="en" id="dari_tgl" placeholder="Dari Tgl">
+                                    <input type="text" name="tgl1" class="form-control datepicker-here" data-position="bottom left" data-date-format="dd-mm-yyyy" data-language="en" id="dari_tgl" placeholder="Dari Tgl" required>
                                 </div>
                                 <div class="form-group mb-2">
                                 <label for="sampai_tgl" class="p-2 mx-2"> Sampai tgl:</label>
-                                    <input type="text" name="tgl2" class="form-control datepicker-here"  data-position="bottom right" data-date-format="dd-mm-yyyy" data-language="en"  id="sampai_tgl" placeholder="Sampai Tgl" >
+                                    <input type="text" name="tgl2" class="form-control datepicker-here"  data-position="bottom right" data-date-format="dd-mm-yyyy" data-language="en"  id="sampai_tgl" placeholder="Sampai Tgl" required>
                                 </div>
                                 <input type="submit" class="btn btn-outline-secondary btn-sm mb-2 mx-3" name="submit" value="Submit">
                             </form>
@@ -30,30 +30,24 @@
                     <div class="row mb-4">
                         <div class="col-md">
                             <a href="<?php echo base_url('c_laporan/keuangan') ?>" class="btn btn-primary btn-sm"><i class="fas fa-redo fa-fw text-cen"></i> Refresh</a>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-print"></i> Print</button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="">Lpaoran</a>
-                                    </div>
-                            </div>
                         </div>
                     </div>
                     <div class="row mt-2">
-                        <div class="col-md-11">
+                        <div class="col-md-12">
                             <table class="table table-sm mt-5" id="dtable">
                                 <thead class="thead-light text-center">
                                     <th> No</th>
                                     <th> No Order</th>
-                                    <th> No tagihan</th>
-                                    <th> Jumlah tagihan</th>
+                                    <th> No Invoice</th>
+                                    <th> Jumlah Tagihan</th>
                                     <th> Status Bayar</th>
+                                    <th> Invoice</th>
                                 </thead>
                                 <tbody class="text-center">
                                     <?php
                                     $no = 1; 
                                     $subtotal = 0; 
                                         foreach ($data as $baris):
-                                          
                                             $subtotal += $baris->jumlah_tagihan; 
                                     ?>
                                         <tr>
@@ -62,6 +56,7 @@
                                             <td><?php echo $baris->no_tagihan ?></td>
                                             <td><?php echo angka($baris->jumlah_tagihan) ?></td>
                                             <td><?php echo StatusTagihan($baris->status_tagihan) ?></td>
+                                            <td><a href= "<?php echo base_url('c_pelanggan/print_invoice/'.$baris->no_order) ?>"><i class="fas fa-file-pdf fa-fw"></i> Invoice</a></td>
                                         </tr>
                                         <?php endforeach;  ?>
                                 </tbody>
@@ -84,6 +79,23 @@
                             <h6 class="text-primary">Chart</h6>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <p> Pilih tanggal</p>    
+                                    <form action="<?php echo base_url('c_laporan/print_laporanKeuangan') ?>" method="post" class="form-inline">
+                                        <div class="form-group mb-2">
+                                            <label for="dari_tgl" class="p-2"> Bulan:</label>
+                                            <input type="text" name="bulan" class="form-control datepicker-here"   data-min-view="months" data-view="months" data-position="bottom left" data-date-format="MM" data-language="en" id="dari_tgl" placeholder="Pilih Bulan" required>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                        <label for="sampai_tgl" class="p-2 mx-2"> Tahun:</label>
+                                            <input type="text" name="tahun" class="form-control datepicker-here"  data-min-view="years" data-view="years"  data-position="bottom right" data-date-format="yyyy" data-language="en"  id="sampai_tgl" placeholder="Pilih Tahun" required>
+                                        </div>
+                                       <button type="submit" class="btn btn-primary btn-sm ml-4 mx-1"><i class="fas fa-print fa-fw"></i> Print</button>
+                                       <a href="<?php echo base_url('c_laporan/print_allLaporanKeuangan') ?>" class="btn btn-info btn-sm"><i class="fas fa-print fa-fw"></i>  Print All</a>
+                                    </form>
+                                </div>
+                            </div>
                             <div class="row mt-4">
                                 <div class="col-md-9">
                                 <h6 class="text-dark text-center mt-4 mb-2">Pemasukan QLab Tahun <?php echo $tahun;  ?></h6>

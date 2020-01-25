@@ -92,6 +92,46 @@ function getRomawi($bln){
                 }
 }
 
+function getBulan($bln){
+                switch ($bln){
+					case "January": 
+                        return 1;
+                        break;
+					case "February": 
+                        return 2;
+                        break;
+					case "March": 
+                        return 3;
+                        break;
+					case "April": 
+                        return 4;
+                        break;
+					case "May": 
+                        return 5;
+                        break;
+					case "June": 
+                        return 6;
+                        break;
+					case "July": 
+                        return 07;
+                        break;
+					case "August": 
+                        return 8;
+                        break;
+					case "September": 
+                        return 9;
+                        break;
+					case "October": 
+                        return 10;
+                        break;
+					case "November": 
+                        return 11;
+                        break;
+					case "December": 
+                        return 12;
+                        break;
+                }
+}
 
 function terbilang($x){
   $abil = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
@@ -218,15 +258,31 @@ function hapuskoma($kata){
 		$wk=$tanggal." ".$judul_bln[(int)$bulan]." ".$tahun;
 		return $wk;
 	}
-function getName($tb,$primary,$parameter,$field) {
-	$ci = get_instance();
-	 $ci->db->where($primary, $parameter);
-       $data=$ci->db->get($tb)->row();
 	
-		return $data->$field;
-		////getName('tb_anggota','id_anggota',$hasil[id_anggota],'nama')//penggunaaanya
+	function getName($tb,$primary,$parameter,$field) {
+		$ci = get_instance();
+		 $ci->db->where($primary, $parameter);
+		   $data=$ci->db->get($tb)->row();
+		
+			return $data->$field;
+			////getName('tb_anggota','id_anggota',$hasil[id_anggota],'nama')//penggunaaanya
+	}
+
 	
-}
+	function cek_bidang($no_order, $bidang){
+		$ci = get_instance();
+		$cek = $ci->m_registrasi_sampel->rekap_regist(array('order.no_order' => $no_order), array('id_bidang' => $bidang))->num_rows();
+		return $cek; 
+	}
+	
+	function total_perbidang($no_order, $bidang){
+		$ci = get_instance();
+		$hasil = $ci->m_registrasi_sampel->getJumlah(array('order.no_order'=> $no_order), array('id_bidang' => $bidang));
+		$row = $hasil->row();
+		return $row->jml;
+		
+	}
+
 
 
 // FUNCTION STATUS ORDER

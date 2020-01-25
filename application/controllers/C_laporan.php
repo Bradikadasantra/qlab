@@ -138,6 +138,228 @@ class C_laporan extends MY_Controller {
         $pdf->Output(date('ymd').'_Rekap Sampel_'.$param2,'I');
     }
 
+
+    public function print_laporanKeuangan(){
+        $bulan = getBulan($this->input->post('bulan'));
+        $tahun = $this->input->post('tahun');
+        $label = " ~ Penerimaan bulan ".$this->input->post('bulan')."  ".$tahun;
+    
+        $kueri = $this->m_registrasi_sampel->list_keuangan("(month(tgl_order) = '$bulan')", "(year(tgl_order) = '$tahun')")->result();
+
+
+        $pdf = new pdf('L','mm','A4');
+        $pdf->SetMargins(10,10,10);
+        $pdf->AliasNbPages();
+        // membuat halaman baru
+        $pdf->AddPage();
+        $pdf->Cell(10,1,'',0,1); 
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(276,7,'Laporan Keuangan',0,1,'C');
+        $pdf->Cell(0,7,'',0,1);
+
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(276,2,$label,0,1,'L');   
+        $pdf->Cell(0,2,'',0,1,'L');
+        $pdf->Cell(0,2,'',0,1);
+
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(30,10,'Tanggal',1,0,'C');
+        $pdf->Cell(50,10,'Pelanggan',1,0,'C');
+        $pdf->Cell(40,10,'Nomor Invoice',1,0,'C');
+        $pdf->Cell(115,5,'Bidang Pengujian',1,0,'C');
+        $pdf->Cell(40,10,'Jumlah (Rp)',1,0,'C');
+        $pdf->Cell(0,5,'',0,1,'C');
+
+        //second line row
+        $pdf->Cell(120,5,'',0,0,'C');
+        $pdf->Cell(38.3,5,'Kimia',1,0,'C');
+        $pdf->Cell(38.3,5,'Mikrobiologi',1,0,'C');
+        $pdf->Cell(38.3,5,'Farmakologi',1,0,'C');
+
+        $pdf->Cell(0,5,'',0,1,'C');
+        $pdf->SetFont('Arial','',10);
+       
+        $total_allKimia = 0;
+        $total_allMikro = 0; 
+        $total_allFarma = 0;
+        foreach ($kueri as $baris){
+            $pelanggan = getName('pelanggan', 'id_pelanggan', $baris->id_pelanggan, 'instansi');
+            $pdf->Cell(30,7,date('d-m-Y',strtotime($baris->tgl_order)),1,0,'C');
+            $pdf->Cell(50,7,$pelanggan,1,0,'C');
+            $pdf->Cell(40,7,$baris->no_tagihan,1,0,'C');
+            
+            $total_allKimia += total_perbidang($baris->no_order, 'K');
+            $total_allMikro += total_perbidang($baris->no_order, 'M');
+            $total_allFarma += total_perbidang($baris->no_order, 'F');
+            if (cek_bidang($baris->no_order, 'K') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'K')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+
+            if (cek_bidang($baris->no_order, 'M') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'M')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+
+            if (cek_bidang($baris->no_order, 'F') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'F')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+          $total = total_perbidang($baris->no_order, 'K') + total_perbidang($baris->no_order, 'F')+total_perbidang($baris->no_order, 'M');
+
+          $pdf->Cell(40,7,angka($total),1,0,'C');
+
+            $pdf->Cell(0,7,'',0,1,'C');
+        }
+    
+          // jumlah
+        $pdf->SetFont('Arial','B',11);
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'Jumlah',1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allKimia),1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allMikro),1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allFarma),1,0,'C');
+
+        // akumulasi dari row jumlah 
+        $jum_Total = $total_allKimia + $total_allMikro + $total_allFarma;
+        $pdf->Cell(40,8,angka($jum_Total),1,1,'C');
+
+        //netto
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'Netto',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(40,8,'Rp.',1,1,'C');
+
+        // akumulasi row netto
+        //20 %
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'20%',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(40,8,'Rp.',1,1,'C');
+
+        $pdf->Output((date('dmY')."_"),'I');
+    }
+
+
+   public function print_allLaporanKeuangan(){
+        $label = "All Laporan Keuangan";
+    
+        $pdf = new pdf('L','mm','A4');
+        $pdf->SetMargins(10,10,10);
+        $pdf->AliasNbPages();
+        // membuat halaman baru
+        $pdf->AddPage();
+        $pdf->Cell(10,1,'',0,1); 
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(276,7,'Laporan Keuangan',0,1,'C');
+        $pdf->Cell(0,7,'',0,1);
+
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(276,2,$label,0,1,'L');   
+        $pdf->Cell(0,2,'',0,1,'L');
+        $pdf->Cell(0,2,'',0,1);
+
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(30,10,'Tanggal',1,0,'C');
+        $pdf->Cell(50,10,'Pelanggan',1,0,'C');
+        $pdf->Cell(40,10,'Nomor Invoice',1,0,'C');
+        $pdf->Cell(115,5,'Bidang Pengujian',1,0,'C');
+        $pdf->Cell(40,10,'Jumlah (Rp)',1,0,'C');
+        $pdf->Cell(0,5,'',0,1,'C');
+
+        //second line row
+        $pdf->Cell(120,5,'',0,0,'C');
+        $pdf->Cell(38.3,5,'Kimia',1,0,'C');
+        $pdf->Cell(38.3,5,'Mikrobiologi',1,0,'C');
+        $pdf->Cell(38.3,5,'Farmakologi',1,0,'C');
+
+        $pdf->Cell(0,5,'',0,1,'C');
+        $pdf->SetFont('Arial','',10);
+       
+        $total_allKimia = 0;
+        $total_allMikro = 0; 
+        $total_allFarma = 0;
+
+        foreach ($kueri as $baris){
+            $pelanggan = getName('pelanggan', 'id_pelanggan', $baris->id_pelanggan, 'instansi');
+            $pdf->Cell(30,7,date('d-m-Y',strtotime($baris->tgl_order)),1,0,'C');
+            $pdf->Cell(50,7,$pelanggan,1,0,'C');
+            $pdf->Cell(40,7,$baris->no_tagihan,1,0,'C');
+            
+            $total_allKimia += total_perbidang($baris->no_order, 'K');
+            $total_allMikro += total_perbidang($baris->no_order, 'M');
+            $total_allFarma += total_perbidang($baris->no_order, 'F');
+            if (cek_bidang($baris->no_order, 'K') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'K')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+
+            if (cek_bidang($baris->no_order, 'M') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'M')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+
+            if (cek_bidang($baris->no_order, 'F') > 0 ){
+                $pdf->Cell(38.3,7,angka(total_perbidang($baris->no_order, 'F')),1,0,'C');
+            }else{
+                $pdf->Cell(38.3,7,'-',1,0,'C');
+            }
+          $total = total_perbidang($baris->no_order, 'K') + total_perbidang($baris->no_order, 'F')+total_perbidang($baris->no_order, 'M');
+
+          $pdf->Cell(40,7,angka($total),1,0,'C');
+
+            $pdf->Cell(0,7,'',0,1,'C');
+        }
+    
+          // jumlah
+        $pdf->SetFont('Arial','B',11);
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'Jumlah',1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allKimia),1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allMikro),1,0,'C');
+        $pdf->Cell(38.3,8,angka($total_allFarma),1,0,'C');
+
+        // akumulasi dari row jumlah 
+        $jum_Total = $total_allKimia + $total_allMikro + $total_allFarma;
+        $pdf->Cell(40,8,angka($jum_Total),1,1,'C');
+
+        //netto
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'Netto',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(40,8,'Rp.',1,1,'C');
+
+        // akumulasi row netto
+        //20 %
+        $pdf->Cell(30,8,'',0,0,'C');
+        $pdf->Cell(50,8,'',0,0,'C');
+        $pdf->Cell(40,8,'20%',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(38.3,8,'-',1,0,'C');
+        $pdf->Cell(40,8,'Rp.',1,1,'C');
+
+        
+        $pdf->Output((date('dmY')."_"),'I');
+    }
+
+
     
     public function print_dokumen($param,$param2){
 

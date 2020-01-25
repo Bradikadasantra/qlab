@@ -88,7 +88,7 @@
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url('c_permintaan_uji/list_sertifikat')?>">
           <i class="fas fa-fw fa-award"></i>
-          <span>Sertifikat</span></a>
+          <span>Hasil Uji</span></a>
       </li>
 
       <li class="nav-item">
