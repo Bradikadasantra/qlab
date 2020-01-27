@@ -451,7 +451,7 @@ class C_permintaan_uji extends MY_Controller {
       $data = array('status' => 2);
       $lanjut = $this->m_registrasi_sampel->update(array('order.no_order'=> $no_order), $data, 'order');
     }
-        if ($run = 1 or $lanjut = 1){
+        if ($run = 1 or $lanjut = 1){ 
           echo $this->session->set_flashdata('pesan', 
           '<script>
           swal("Success !", "Konfirmasi Sampel Berhasil !", "success"); 

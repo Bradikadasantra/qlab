@@ -61,11 +61,11 @@ class M_admin extends CI_Model{
 			return $this->db->update($table,$data);
 		}
 
-		function get_by_id($table,$param,$id)
+	function get_by_id($table,$param,$id)
 		{
 			$this->db->where($param, $id);
 			return $this->db->get($table)->row();
-		}
+	}
 
 	public function cari_admin($where){
 		$this->db->select('*');

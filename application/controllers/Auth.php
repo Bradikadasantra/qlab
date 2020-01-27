@@ -49,11 +49,8 @@ class Auth extends CI_Controller {
 					$baris_data['email'] = $hasil->email;
 					$baris_data['hak_akses'] = $hasil->hak_akses;
 					$this->session->set_userdata($baris_data);
-						
-					$this->session->set_flashdata('message','<div class="alert alert-danger alert-dismissible">
-							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-							<b>Failed...!</b> Password anda salah</div>');
-							redirect('c_dashboard');
+
+					redirect('c_dashboard');
 					}else{
 					$this->session->set_flashdata('message','<div class="alert alert-danger alert-dismissible">
 							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -81,7 +78,7 @@ class Auth extends CI_Controller {
 		$this->form_validation->set_rules('email','Email','required|trim|valid_email|is_unique[auth.email]', 
 		array('required'=>'Isikan Alamat Email Anda...!','valid_email'=>'Email tidak valid...!','is_unique'=>'Email sudah terdaftar...!'));
 		
-		$this->form_validation->set_rules('password1','Password','required|trim|min_length[6]|matches[password2]}',
+		$this->form_validation->set_rules('password1','Password','required|trim|min_length[6]|matches[password2]',
 		array('required'=>'Isikan Password...!','min_length'=>'Password min 6 karakter','matches'=>'Password Tidak Sesuai...!'));
 		
 		$this->form_validation->set_rules('password2','Password','required|trim|matches[password1]',

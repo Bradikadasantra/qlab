@@ -168,6 +168,7 @@ class C_registrasi_sampel extends MY_Controller {
       'nama_sampel'         => ucwords($this->input->post('nama_sampel')),
       'pemerian'            => ucwords($this->input->post('pemerian')),
       'kode_batch'          => $this->input->post('kode_batch'),
+      'jumlah'              => $this->input->post('jumlah'),
       'kemasan'             => $this->input->post('kemasan'),
       'transportasi_sampel' => $this->input->post('transportasi_sampel'),
       'tempat_penyimpanan'  => $this->input->post('tempat_penyimpanan'),
@@ -268,7 +269,7 @@ class C_registrasi_sampel extends MY_Controller {
   }
       $this->session->set_flashdata('pesan','<div class="alert alert-success alert-dismissible">
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      <strong>1 Data Berhasil Ditambahkan</strong></div>');
+      <strong>1 Data Sampel Berhasil Ditambahkan</strong></div>');
       redirect('c_registrasi_sampel'); 
      
   }  
@@ -427,10 +428,11 @@ class C_registrasi_sampel extends MY_Controller {
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
       <strong><center> Permintaan Pengujian Gagal Dibuat </center></strong></div>');
     }
-    redirect('c_registrasi_sampel/registrasi');
+    redirect('c_registrasi_sampel');
   }  
 
 
+  // dikaji lagi / dihapus
   public function edit_PermohonanSampel($id_sampel){
     $hak_akses = $this->session->userdata('hak_akses');
     $where = array('id_sampel' => $id_sampel);
@@ -440,6 +442,8 @@ class C_registrasi_sampel extends MY_Controller {
   
     $this->templates->utama('pelanggan/v_edit_PermohonanSampel', $data);
   }
+
+ 
 
   public function update_PermohonanSampel(){
 
@@ -482,7 +486,11 @@ class C_registrasi_sampel extends MY_Controller {
     redirect ('c_pelanggan/tampil_riwayat');
   }
 
+   // end
 
+
+
+   // ini ntar diaktifin setelah selesai skripsi
   public function batalkan_pelanggan($id_sampel){
     $row = $this->m_registrasi_sampel->get_by_id('sampel','id_sampel', $id_sampel);
     $row2 = $this->m_registrasi_sampel->get_by_id('order_detail', 'id_order_detail', $row->id_order_detail);
@@ -522,6 +530,8 @@ class C_registrasi_sampel extends MY_Controller {
     }
     redirect("c_pelanggan/tampil_riwayat");
   }
+
+  // end
 
 }
 

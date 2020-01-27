@@ -18,6 +18,186 @@ class C_pelanggan extends MY_Controller {
       redirect('c_dashboard');
     }
 
+    public function form_editProfil(){
+
+        $id_auth = $this->session->userdata('id_auth');
+        $where = array('auth.id_auth'=> $id_auth); 
+  
+        $data['user'] = $this->m_admin->cari_pelangganAuth($where)->result();
+        $data['action'] = base_url('c_pelanggan/action_updateProfil_pelanggan');
+        $this->templates->utama('admin/v_form_editProfil', $data);
+  
+    }
+
+    public function action_updateProfil_pelanggan(){
+      $id_auth   = $this->input->post('id_auth');
+      $row = $this->m_admin->get_by_id('pelanggan', 'id_auth', $id_auth);
+  
+      if ($this->input->post('ubah_photo')){
+        $config['upload_path']          = './photo/';
+        $config['allowed_types']        = 'jpg|png';
+        $config['max_size']             = 2044070;
+  
+      
+        $ambil_data = $this->m_admin->ambil_pelanggan(array('id_pelanggan'=> $row->id_pelanggan));
+        if($ambil_data->num_rows() > 0){
+          $pros=$ambil_data->row();
+          $gambar=$pros->foto;
+          
+            if(is_file($lok=FCPATH.'/photo/'.$gambar)){
+            unlink($lok);
+          }
+        }
+        $this->load->library('upload', $config);
+        if($this->upload->do_upload('photo')){
+          $finfo = $this->upload->data();
+          $nama_foto = $finfo['file_name'];
+  
+      $data = array(
+        'nama'				=> ucwords($this->input->post('nama')),
+        'no_telp'			=> $this->input->post('no_telp'),
+        'alamat'			=> ucwords($this->input->post('alamat')),
+        'instansi' 			=> ucwords($this->input->post('instansi')),
+        'alamat_instansi'	=> ucwords($this->input->post('alamat_instansi')),
+        'diubah'			=> date('Y-m-d'),
+        'foto'				=> $nama_foto
+      );
+      $hasil = $this->m_admin->update_admin(array('id_pelanggan'=>$row->id_pelanggan), $data, 'pelanggan');
+  
+      $data2 = array(
+        'email'			=> $this->input->post('email')
+      );
+      $hasil2 = $this->m_admin->update_admin(array('id_auth'=>$id_auth), $data2, 'auth');	
+      if ($hasil = 1 and $hasil2 = 1){
+        echo $this->session->set_flashdata('pesan', 
+        '<script>
+        swal("Success !", "Sukses perbarui profil !", "success"); 
+        </script>');
+      }else{
+        echo $this->session->set_flashdata('pesan', 
+        '<script>
+              swal({
+              title: "Failed",
+              text: "Gagal perbarui profil",
+              type: "warning",
+              });
+            </script>');
+          
+      }
+    }else{
+      echo $this->session->set_flashdata('pesan', 
+        '<script>
+          swal({
+          title: "Failed",
+          text: "Format file tidak didukung",
+          type: "warning",
+          });
+        </script>');
+      }
+      
+      redirect('c_pelanggan/form_editProfil');
+  
+  
+      }else{
+        $data = array(
+          'nama'				=> ucwords($this->input->post('nama')),
+          'no_telp'			=> $this->input->post('no_telp'),
+          'alamat'			=> ucwords($this->input->post('alamat')),
+          'instansi' 			=> ucwords($this->input->post('instansi')),
+          'alamat_instansi'	=> ucwords($this->input->post('alamat_instansi')),
+          'diubah'			=> date('Y-m-d')
+        );
+        $hasil = $this->m_admin->update_admin(array('id_pelanggan'=>$row->id_pelanggan), $data, 'pelanggan');
+    
+        $data2 = array(
+          'email'			=> $this->input->post('email')
+        );
+        $hasil2 = $this->m_admin->update_admin(array('id_auth'=>$id_auth), $data2, 'auth');	
+        }
+          if ($hasil = 1 and $hasil2 = 1){
+            echo $this->session->set_flashdata('pesan', 
+            '<script>
+            swal("Success !", "Sukses perbarui profil !", "success"); 
+            </script>');
+          }else{
+            echo $this->session->set_flashdata('pesan', 
+            '<script>
+                  swal({
+                  title: "Failed",
+                  text: "Gagal perbarui profil",
+                  type: "warning",
+                  });
+                </script>');
+              
+          }
+          redirect('c_pelanggan/form_editProfil');
+    }
+
+    public function ubah_password(){
+      $data['action'] = base_url('c_pelanggan/action_ubahPassword_pelanggan');
+      $this->templates->utama('admin/v_form_ubahPassword', $data);
+    }
+
+    public function action_ubahPassword_pelanggan(){
+		
+      $id_auth = $this->input->post('id_auth');
+      $cari_pass = $this->db->query("SELECT * FROM auth WHERE id_auth = '$id_auth'")->row();
+      $ambil_pass = $cari_pass->password; 
+      $where = array ('id_auth'=> $id_auth);
+  
+      $this->form_validation->set_rules('password_lama','Password Lama','required|trim', array('required'=>'Masukkan password lama...!'));
+      $this->form_validation->set_rules('password_baru','Password Baru','required|trim|min_length[6]',
+      array('required'=>'Masukkan password baru...!','min_length'=>'Password min 6 karakter'));
+  
+      $this->form_validation->set_rules('konfirm_pass_baru','Konfirm Password Baru','required|trim|min_length[6]|matches[password_baru]',
+      array('required'=>'Konfirmasi password baru...!','min_length'=>'Password min 6 karakter','matches'=>'Password Tidak Sesuai...!'));
+  
+      
+      if ($this->form_validation->run () == false ){
+        $this->ubah_password();
+      }else{
+        if (password_verify($this->input->post('password_lama'),$ambil_pass)){
+          
+          // lakukan update password
+  
+          $data = array(
+            'password' => PASSWORD_HASH($this->input->post('konfirm_pass_baru'), PASSWORD_DEFAULT)
+          );
+  
+        $update = $this->m_admin->update_admin($where, $data, 'auth');
+  
+        if ($update = 1){
+          echo $this->session->set_flashdata('pesan', 
+            '<script>
+            swal("Success !", "Sukses perbarui password !", "success"); 
+            </script>');
+        }else{
+          echo $this->session->set_flashdata('pesan', 
+          '<script>
+                swal({
+                title: "Failed",
+                text: "Gagal perbarui password",
+                type: "warning",
+                });
+              </script>');
+        }
+  
+        }else{
+          echo $this->session->set_flashdata('pesan', 
+            '<script>
+                  swal({
+                  title: "Failed",
+                  text: "Password lama tidak cocok",
+                  type: "warning",
+                  });
+                </script>');
+        
+        }
+        redirect('c_pelanggan/ubah_password');
+      }	
+    }
+
+
   public function tampil_riwayat(){
       $id_auth = $this->session->userdata('id_auth');
       $cari_id_pelanggan = $this->m_pelanggan->ambil_info_pelanggan($id_auth)->row();

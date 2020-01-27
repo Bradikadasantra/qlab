@@ -29,7 +29,7 @@
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">Pilih "Logout" jika anda ingin keluar...</div>
+        <div class="modal-body">Pilih "Keluar" jika anda ingin keluar...</div>
 			<div class="modal-footer">
 			  <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Batal</button>
 			  <a class="btn btn-primary btn-sm" href="<?php echo base_url('auth/logout')?>">Keluar</a>

@@ -364,13 +364,6 @@ class C_dokumen extends MY_Controller {
 }
 
 
-
-
-
-
-
-
-
     public function periksa_dokumen(){
         $hak_akses = $this->session->userdata('hak_akses');
 

@@ -51,12 +51,25 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                
+                <?php 
+                  if ($this->session->userdata('hak_akses') == 12){
+                ?>
+                <a class="dropdown-item" href="<?php echo base_url('c_pelanggan/form_editProfil') ?>">
+                  <?php } else { ?>
                 <a class="dropdown-item" href="<?php echo base_url('c_admin/form_editProfil') ?>">
+                  <?php } ?>
                   <i class="fas fa-id-card fa-sm fa-fw mr-2 text-gray-400"></i>
                   Profil
                 </a>
 
+                <?php 
+                  if ($this->session->userdata('hak_akses') == 12){
+                ?>
+                <a class="dropdown-item" href="<?php echo  base_url('c_pelanggan/ubah_password')?>">
+                  <?php } else { ?>
                 <a class="dropdown-item" href="<?php echo  base_url('c_admin/ubah_password')?>">
+                  <?php } ?>
                   <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
                   Password
                 </a>
